@@ -1,0 +1,22 @@
+{
+  "name": "dejavara",
+  "version": "1.0.0",
+  "description": "Personal platform ecosystem with Clawdbot as central AI controller.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecnepsyroc-bot/Dejavara.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ecnepsyroc-bot/Dejavara/issues"
+  },
+  "homepage": "https://github.com/ecnepsyroc-bot/Dejavara#readme"
+}

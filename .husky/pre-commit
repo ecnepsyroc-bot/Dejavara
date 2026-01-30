@@ -1,0 +1,1 @@
+cd Cambium/Cambium/clients/shared && npm run lint
