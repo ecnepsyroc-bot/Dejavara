@@ -1,0 +1,12 @@
+[submodule "Clawdbot"]
+	path = Clawdbot
+	url = https://github.com/ecnepsyroc-bot/Clawdbot.git
+[submodule "Cambium"]
+	path = Cambium
+	url = https://github.com/ecnepsyroc-bot/Cambium.git
+[submodule "Phteah-pi"]
+	path = Phteah-pi
+	url = https://github.com/ecnepsyroc-bot/Phteah-pi.git
+[submodule "FileOrganizer"]
+	path = FileOrganizer
+	url = https://github.com/ecnepsyroc-bot/FileOrganizer.git
