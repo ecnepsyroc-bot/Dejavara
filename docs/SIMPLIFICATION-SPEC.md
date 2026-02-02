@@ -126,7 +126,7 @@ dotnet build Luxify.Layout/Luxify.Layout.csproj
 
 ### 2.2 Vitest Configuration Consolidation
 
-**Location:** `Clawdbot/`
+**Location:** `OpenClaw/`
 
 **Current State (6 configs):**
 
@@ -194,9 +194,9 @@ npm run test:extensions
 - [Development](../Phteah-pi/DEVELOPMENT.md)
 - [Port Registry](../Phteah-pi/docs/PORT-REGISTRY.md)
 
-### Clawdbot (AI)
+### OpenClaw (AI)
 
-- Located in `Clawdbot/` submodule
+- Located in `OpenClaw/` submodule
 
 ## Shared Utilities
 
@@ -233,7 +233,7 @@ npm run test:extensions
 
 ## Phase 3: Refactoring [PENDING]
 
-### 3.1 Clawdbot BaseMonitor Extraction
+### 3.1 OpenClaw BaseMonitor Extraction
 
 **Problem:** 8 nearly identical monitor implementations
 
@@ -279,7 +279,7 @@ export abstract class BaseMonitor {
 
 ### 3.2 Large File Splits
 
-#### Clawdbot Files >1000 lines
+#### OpenClaw Files >1000 lines
 
 | File | Lines | Split Strategy |
 |------|-------|----------------|
@@ -400,10 +400,10 @@ c:\Dev\Dejavara\Cambium\AutoCAD-Tools\Luxify\
 └── Luxify.CuttingBill\Luxify.CuttingBill.csproj
 ```
 
-### Clawdbot Monitors
+### OpenClaw Monitors
 
 ```text
-c:\Dev\Dejavara\Clawdbot\src\
+c:\Dev\Dejavara\OpenClaw\src\
 ├── discord\monitor.ts
 ├── imessage\monitor.ts
 ├── line\monitor.ts

@@ -1,12 +1,12 @@
 # Dejavara
 
-Personal platform ecosystem with Clawdbot as central AI controller.
+Personal platform ecosystem with OpenClaw as central AI controller.
 
 ## Structure
 
 ```
 Dejavara/
-├── Clawdbot/        ← Central AI assistant (Claude API)
+├── OpenClaw/        ← Central AI assistant (Claude API)
 ├── Cambium/         ← Work domain (millwork automation)
 ├── Phteah-pi/       ← Home domain (Raspberry Pi server)
 └── FileOrganizer/   ← Shared file organization utility
@@ -16,7 +16,7 @@ Dejavara/
 
 | Domain | Purpose | Tech Stack |
 |--------|---------|------------|
-| **Clawdbot** | Central AI controller | TypeScript, Claude API |
+| **OpenClaw** | Central AI controller | TypeScript, Claude API |
 | **Cambium** | Work - Millwork factory automation | C#/.NET, React, PostgreSQL |
 | **Phteah-pi** | Home - Raspberry Pi server | Docker, Traefik, Home Assistant |
 | **FileOrganizer** | Shared - File organization CLI | C#/.NET |

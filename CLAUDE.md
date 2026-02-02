@@ -4,11 +4,11 @@ Master orchestration platform with domains for work and home.
 
 ## Platform Overview
 
-**Dejavara** is a personal ecosystem orchestrated by Clawdbot (AI controller).
+**Dejavara** is a personal ecosystem orchestrated by OpenClaw (AI controller).
 
 | Component | Purpose | Details |
 |-----------|---------|---------|
-| Clawdbot | Central AI controller | Claude API-powered assistant |
+| OpenClaw | Central AI controller | Claude API-powered assistant |
 | Cambium | Work domain | See `Cambium/CLAUDE.md` |
 | Phteah-pi | Home domain | See `Phteah-pi/CLAUDE.md` |
 | FileOrganizer | Shared utility | File organization across domains |
@@ -18,7 +18,7 @@ Master orchestration platform with domains for work and home.
 
 ```
 Dejavara (Master)
-├── Clawdbot/        ← AI brain, orchestrates everything
+├── OpenClaw/        ← AI brain, orchestrates everything
 ├── Cambium/         ← Work: millwork factory systems
 ├── Phteah-pi/       ← Home: Raspberry Pi server
 ├── FileOrganizer/   ← Shared: file organization
@@ -27,7 +27,7 @@ Dejavara (Master)
 
 ## Domain Boundaries
 
-- **Clawdbot** coordinates across domains but doesn't own domain logic
+- **OpenClaw** coordinates across domains but doesn't own domain logic
 - **Cambium** handles all work/factory concerns
 - **Phteah-pi** handles all home server concerns
 - **FileOrganizer** is a utility consumed by both domains
@@ -62,6 +62,6 @@ Dejavara (Master)
 
 - Work tasks → `Cambium/CLAUDE.md`
 - Home tasks → `Phteah-pi/CLAUDE.md`
-- AI/orchestration → `Clawdbot/`
+- AI/orchestration → `OpenClaw/`
 - File organization → `FileOrganizer/`
 - AutoCAD scripts → `AutoCAD-AHK/`

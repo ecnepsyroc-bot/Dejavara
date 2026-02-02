@@ -25,11 +25,11 @@ Raspberry Pi home server.
 - [Development](../Phteah-pi/DEVELOPMENT.md) - Dev environment setup
 - [Port Registry](../Phteah-pi/docs/PORT-REGISTRY.md) - Service ports
 
-### Clawdbot (AI)
+### OpenClaw (AI)
 
 Central AI controller powered by Claude API.
 
-- Located in `Clawdbot/` submodule
+- Located in `OpenClaw/` submodule
 - TypeScript-based, ~560k lines
 
 ---
@@ -62,7 +62,7 @@ AutoHotkey scripts for AutoCAD panning.
 
 | Component | Language | Lines | Purpose |
 |-----------|----------|-------|---------|
-| Clawdbot | TypeScript | 560,292 | AI orchestration |
+| OpenClaw | TypeScript | 560,292 | AI orchestration |
 | Cambium | C# | 390,010 | Factory systems |
 | Luxify | C# | ~15,000 | AutoCAD plugin |
 | Phteah-pi | Mixed | ~6,000 | Home automation |
