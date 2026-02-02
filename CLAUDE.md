@@ -12,6 +12,7 @@ Master orchestration platform with domains for work and home.
 | Cambium | Work domain | See `Cambium/CLAUDE.md` |
 | Phteah-pi | Home domain | See `Phteah-pi/CLAUDE.md` |
 | FileOrganizer | Shared utility | File organization across domains |
+| AutoCAD-AHK | Shared utility | AutoHotkey scripts for AutoCAD |
 
 ## Architecture
 
@@ -20,7 +21,8 @@ Dejavara (Master)
 ├── Clawdbot/        ← AI brain, orchestrates everything
 ├── Cambium/         ← Work: millwork factory systems
 ├── Phteah-pi/       ← Home: Raspberry Pi server
-└── FileOrganizer/   ← Shared: file organization
+├── FileOrganizer/   ← Shared: file organization
+└── AutoCAD-AHK/     ← Shared: AutoCAD panning scripts
 ```
 
 ## Domain Boundaries
@@ -36,3 +38,4 @@ Dejavara (Master)
 - Home tasks → `Phteah-pi/CLAUDE.md`
 - AI/orchestration → `Clawdbot/`
 - File organization → `FileOrganizer/`
+- AutoCAD scripts → `AutoCAD-AHK/`

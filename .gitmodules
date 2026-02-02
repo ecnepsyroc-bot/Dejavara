@@ -10,3 +10,6 @@
 [submodule "FileOrganizer"]
 	path = FileOrganizer
 	url = https://github.com/ecnepsyroc-bot/FileOrganizer.git
+[submodule "AutoCAD-AHK"]
+	path = AutoCAD-AHK
+	url = https://github.com/ecnepsyroc-bot/AutoCAD-AHK.git
