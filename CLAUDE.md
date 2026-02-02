@@ -32,6 +32,32 @@ Dejavara (Master)
 - **Phteah-pi** handles all home server concerns
 - **FileOrganizer** is a utility consumed by both domains
 
+## Git Workflow
+
+**Commit incrementally** - Do NOT let changes accumulate. Commit after each logical change:
+
+1. After implementing a feature or fix, commit immediately
+2. After adding new files, commit before moving to the next task
+3. After modifying configuration, commit before code changes
+4. When working across submodules, commit inner repos first, then outer
+
+**Commit order for submodules:**
+
+```text
+1. AutoCAD-Tools (if changed) → commit & push
+2. Cambium (if changed) → commit & push
+3. Dejavara → commit & push (updates submodule refs)
+```
+
+**Why incremental commits matter:**
+
+- Smaller commits are easier to review and revert
+- Reduces risk of losing work
+- Keeps working directory clean
+- Makes code review possible
+
+**Use `--no-verify` sparingly** - Only for submodule reference updates when hooks fail on non-code changes.
+
 ## Quick Navigation
 
 - Work tasks → `Cambium/CLAUDE.md`
