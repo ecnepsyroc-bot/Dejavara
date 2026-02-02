@@ -1,1 +1,4 @@
-cd Cambium/Cambium/clients/shared && npm run lint
+# Root-level commits are typically submodule reference updates only.
+# Code linting happens in individual submodules (Cambium, Phteah-pi).
+# No additional checks needed at this level.
+exit 0
