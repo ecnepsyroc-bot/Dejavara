@@ -1,5 +1,5 @@
-[submodule "Clawdbot"]
-	path = Clawdbot
+[submodule "OpenClaw"]
+	path = OpenClaw
 	url = https://github.com/ecnepsyroc-bot/Clawdbot.git
 [submodule "Cambium"]
 	path = Cambium
