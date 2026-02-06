@@ -4,7 +4,10 @@
       "Bash(wsl -d Ubuntu -- bash -c \"pgrep -f ''(openclaw|clawdbot).*gateway'' || pgrep -f ''node.*entry.js''\")",
       "Bash(wsl -d Ubuntu -- bash -c \"source ~/.nvm/nvm.sh && cd ~/openclaw && nohup node dist/entry.js gateway run --bind loopback --port 18789 > /tmp/openclaw.log 2>&1 & echo \\\\$!\":*)",
       "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Dev'' | Select-Object Name\")",
-      "Bash(ASPNETCORE_ENVIRONMENT=Development dotnet run:*)"
+      "Bash(ASPNETCORE_ENVIRONMENT=Development dotnet run:*)",
+      "Bash(curl:*)",
+      "Bash(tasklist:*)",
+      "Bash(docker exec:*)"
     ]
   }
 }
