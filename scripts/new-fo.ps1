@@ -1,6 +1,6 @@
 ﻿# C:\Dev\Dejavara\scripts\new-fo.ps1
-# V5.3.1 Factory Order Creator - Bare number naming
-# v5.3.1: Added C:\FO\_archive for completed FOs
+# V5.4 Factory Order Creator - Bare number naming
+# v5.4: Part of v5.4 Documentation Standards migration
 param(
     [Parameter(Mandatory)][string]$FONumber,
     [string]$Project,
@@ -56,7 +56,7 @@ if ($Project) {
 Write-Host "" -ForegroundColor Green
 Write-Host "FO $FONumber created: $foRoot" -ForegroundColor Green
 Write-Host "" -ForegroundColor Green
-Write-Host "V5.3.1 naming - use bare FO number:" -ForegroundColor White
+Write-Host "V5.4 naming - use bare FO number:" -ForegroundColor White
 Write-Host "  $FONumber.R41     (not fo_$FONumber.R41)" -ForegroundColor DarkGray
 Write-Host "  $FONumber.csv     (not fo_$FONumber.csv)" -ForegroundColor DarkGray
 Write-Host "  $FONumber.xls     (not fo_$FONumber.xls)" -ForegroundColor DarkGray

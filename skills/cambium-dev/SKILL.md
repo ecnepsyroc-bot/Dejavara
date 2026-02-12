@@ -261,3 +261,50 @@ Located at `C:\Dev\Dejavara\scripts\`:
 
 ### Prerequisites
 SSH access via Cloudflare tunnel must be configured on Cambium server before deployment commands work.
+
+## 9. Railway Failover (3-2-1 Backup)
+
+### Architecture
+
+| Copy | Location | Purpose |
+|------|----------|---------|
+| 1 | Cambium-server (192.168.0.108:5001) | Primary/SSOT |
+| 2 | Railway (cambium-production.up.railway.app) | Offsite cloud failover |
+| 3 | Phteah-pi | Optional local backup |
+
+### Database Sync
+- **Schedule:** Every 20 minutes via `Cambium_Sync` scheduled task
+- **Method:** `pg_dump` → `pg_restore --no-owner`
+- **Logs:** `C:\tmp\sync-log.txt`
+
+Check sync status:
+```powershell
+ssh cambium-server "powershell -Command \"Get-Content C:\tmp\sync-log.txt -Tail 5\""
+```
+
+Trigger manual sync:
+```powershell
+ssh cambium-server "schtasks /run /tn Cambium_Sync"
+```
+
+### JWT Token Portability
+JWT keys are aligned between environments. Tokens minted on Cambium-server validate on Railway.
+
+**Key locations:**
+- Cambium-server: `C:\Services\Cambium\appsettings.Production.json` → `Jwt.Key`
+- Railway: Environment variables `Jwt__Key`, `Jwt:Key`, `JWT_KEY`
+
+### Failover Process
+1. Cambium-server becomes unreachable
+2. Point clients/tablets to `https://cambium-production.up.railway.app`
+3. Existing tokens continue to work (JWT keys match)
+4. Data is max 20 min stale from last sync
+
+### Laminate QR Codes
+QR codes point to Railway URL (`cambium-production.up.railway.app/#resources-laminate`).
+This ensures QR codes work from anywhere, including during Cambium-server downtime.
+
+### Railway URLs
+- **App:** `https://cambium-production.up.railway.app`
+- **Health:** `https://cambium-production.up.railway.app/api/health`
+- **Database:** `trolley.proxy.rlwy.net:44567` (postgres/railway)

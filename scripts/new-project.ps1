@@ -1,5 +1,5 @@
 ﻿# C:\Dev\Dejavara\scripts\new-project.ps1
-# V5.3.1 Project Structure Generator
+# V5.4.3 Project Structure Generator
 param(
     [Parameter(Mandatory)][string]$Name,
     [string]$JobNumber
@@ -13,18 +13,18 @@ if (Test-Path $root) {
     exit 1
 }
 
-# V5.3 12-folder structure (00-11) + system folders
+# V5.4.3 12-folder structure (00-11) + system folders
+# Note: 00-contract/ consolidated to 5 subfolders (v5.4.1)
+# Note: 04-drawings/submittal/ and 01-admin/transmittal/ removed (v5.4.2)
+# Note: 11-awmac/ consolidated to 4 subfolders (v5.4.3)
 $folders = @(
     "00-contract/addenda",
     "00-contract/agreement",
     "00-contract/drawings",
-    "00-contract/ifc",
-    "00-contract/ift",
     "00-contract/insurance",
-    "00-contract/scope",
     "00-contract/specifications",
     "01-admin/ccn",
-    "01-admin/certs",           # v5.3: AWMAC MSE certificate
+    "01-admin/certs",
     "01-admin/change-order",
     "01-admin/close-out",
     "01-admin/deficiencies",
@@ -38,7 +38,8 @@ $folders = @(
     "01-admin/shipping",
     "01-admin/site-instruction",
     "01-admin/submittal",
-    "01-admin/transmittal",
+    "01-admin/submittal/_source",   # v5.4.2: All submittals here
+    "01-admin/submittal/_received", # v5.4.2: Architect review responses
     "02-financial/budget",
     "02-financial/invoices",
     "02-financial/po-log",
@@ -53,8 +54,6 @@ $folders = @(
     "04-drawings/install",
     "04-drawings/production",
     "04-drawings/revision",
-    "04-drawings/submittal",
-    "04-drawings/submittal/_source",  # v5.3: Source files
     "05-materials/countertops/custom",
     "05-materials/countertops/laminate",
     "05-materials/countertops/porcelain",
@@ -102,14 +101,10 @@ $folders = @(
     "09-coordination/plumbing",
     "10-site/measure",
     "10-site/photo",
-    "11-awmac/gis-reports",
-    "11-awmac/inspections",
-    "11-awmac/monitoring",
-    "11-awmac/qc",
-    "11-awmac/reports",
     "11-awmac/submissions",
-    "11-awmac/_source",         # v5.3: Working AWMAC files
-    "11-awmac/_received",       # v5.3: External AWMAC files
+    "11-awmac/qc",
+    "11-awmac/_source",
+    "11-awmac/_received"
     "_archive",
     "_cambium/cache",
     "_cambium/qr"
@@ -132,11 +127,11 @@ foreach ($f in $folders) {
 {
   "project": "$projectName",
   "created": "$(Get-Date -Format 'yyyy-MM-dd')",
-  "version": "5.3",
+  "version": "5.4.3",
   "factoryOrders": []
 }
 "@ | Out-File "$root/_cambium/index.json" -Encoding UTF8
 
-Write-Host "V5.3 Project created: $root" -ForegroundColor Green
+Write-Host "V5.4.3 Project created: $root" -ForegroundColor Green
 Write-Host "  12 numbered folders (00-11)" -ForegroundColor Cyan
 Write-Host "  FO index at 07-production/_fo-index.md" -ForegroundColor Cyan
