@@ -134,8 +134,8 @@ Remote commands use smart routing to automatically select the fastest connection
 
 | Route | SSH Host | When Used |
 |-------|----------|-----------|
-| LAN | `cambium` | At the shop (direct network, fast) |
-| Tunnel | `cambium-tunnel` | Remote (via Cloudflare, works anywhere) |
+| LAN | `cambium-server` | At the shop (direct network, fast) |
+| Tunnel | `cambium-server-tunnel` | Remote (via Cloudflare, works anywhere) |
 | Auto | (detected) | Default — tests LAN first (1s timeout) |
 
 ### How It Works
@@ -144,8 +144,8 @@ When executing ANY remote command (status checks, deployments, restarts, logs):
 
 1. Scripts source `C:\Dev\Dejavara\scripts\ssh-route.ps1`
 2. `Get-CambiumRoute` tests LAN with 1-second timeout
-3. If LAN reachable → use `ssh cambium`
-4. If LAN unreachable → use `ssh cambium-tunnel`
+3. If LAN reachable → use `ssh cambium-server`
+4. If LAN unreachable → use `ssh cambium-server-tunnel`
 
 ### Response Format
 
@@ -190,17 +190,21 @@ Disk: 59.2 GB free
 User's `~/.ssh/config` must have:
 
 ```
-Host cambium
-    HostName 192.168.0.40
+Host cambium-server
+    HostName 192.168.0.108   # DHCP - may change!
     User User
 
-Host cambium-tunnel
+Host cambium-server-tunnel
     HostName cambium-ssh.luxifyspecgen.com
     User User
     ProxyCommand cloudflared access ssh --hostname %h
 ```
 
-**Note:** The Windows account on Cambium server is `User`, not `cory`.
+**Notes:**
+- Windows account on Cambium server is `User`, not `cory`
+- IP is DHCP-assigned; if SSH fails, verify IP via Chrome Remote Desktop
+- Key auth uses `C:\ProgramData\ssh\administrators_authorized_keys` (not user profile)
+- See `/ssh` skill for troubleshooting
 
 ## 8. Deployment (Dev → Prod)
 
