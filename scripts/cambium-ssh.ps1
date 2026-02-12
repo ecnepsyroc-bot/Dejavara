@@ -13,8 +13,8 @@
 .PARAMETER Route
     Force a specific route: Auto (default), LAN, or Tunnel.
     - Auto: Test LAN first, fallback to tunnel
-    - LAN: Force direct LAN connection (cambium)
-    - Tunnel: Force Cloudflare tunnel (cambium-tunnel)
+    - LAN: Force direct LAN connection (cambium-server)
+    - Tunnel: Force Cloudflare tunnel (cambium-server-tunnel)
 
 .PARAMETER Hostname
     Legacy parameter for direct cloudflared access. Deprecated in favor of Route.
@@ -37,7 +37,7 @@
 
 .NOTES
     Prerequisites:
-    - SSH config with 'cambium' (LAN) and 'cambium-tunnel' (Cloudflare) hosts
+    - SSH config with 'cambium-server' (LAN) and 'cambium-server-tunnel' (Cloudflare) hosts
     - cloudflared installed for tunnel connections
     - Authenticated with Cloudflare Access
 #>
@@ -58,14 +58,14 @@ $ErrorActionPreference = "Stop"
 
 # Determine the SSH host to use
 $sshHost = switch ($Route) {
-    'LAN'    { "cambium" }
-    'Tunnel' { "cambium-tunnel" }
+    'LAN'    { "cambium-server" }
+    'Tunnel' { "cambium-server-tunnel" }
     'Auto'   { Get-CambiumRoute }
 }
 
-$routeLabel = if ($sshHost -eq "cambium") { "[LAN]" } else { "[TUNNEL]" }
-$routeDesc = if ($sshHost -eq "cambium") { "shop network" } else { "Cloudflare tunnel" }
-$labelColor = if ($sshHost -eq "cambium") { "Green" } else { "Yellow" }
+$routeLabel = if ($sshHost -eq "cambium-server") { "[LAN]" } else { "[TUNNEL]" }
+$routeDesc = if ($sshHost -eq "cambium-server") { "shop network" } else { "Cloudflare tunnel" }
+$labelColor = if ($sshHost -eq "cambium-server") { "Green" } else { "Yellow" }
 
 if ($Command) {
     # Run single command

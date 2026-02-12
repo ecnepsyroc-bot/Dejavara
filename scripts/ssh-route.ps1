@@ -8,8 +8,8 @@
 
 .NOTES
     SSH hosts (defined in ~/.ssh/config):
-    - cambium        : LAN direct connection to shop server
-    - cambium-tunnel : Cloudflare tunnel via cambium-ssh.luxifyspecgen.com
+    - cambium-server        : LAN direct connection to shop server
+    - cambium-server-tunnel : Cloudflare tunnel via cambium-ssh.luxifyspecgen.com
 #>
 
 function Get-CambiumRoute {
@@ -17,7 +17,7 @@ function Get-CambiumRoute {
     .SYNOPSIS
         Determine the best SSH route to Cambium server.
     .OUTPUTS
-        String: "cambium" (LAN) or "cambium-tunnel" (Cloudflare)
+        String: "cambium-server" (LAN) or "cambium-server-tunnel" (Cloudflare)
     #>
     param(
         [int]$TimeoutMs = 1000
@@ -28,9 +28,9 @@ function Get-CambiumRoute {
     $lanReachable = Test-Connection -ComputerName 192.168.0.40 -Count 1 -Quiet -ErrorAction SilentlyContinue
 
     if ($lanReachable) {
-        return "cambium"
+        return "cambium-server"
     } else {
-        return "cambium-tunnel"
+        return "cambium-server-tunnel"
     }
 }
 
@@ -59,13 +59,13 @@ function Invoke-CambiumSSH {
 
     # Determine route
     $sshHost = switch ($Route) {
-        'LAN'    { "cambium" }
-        'Tunnel' { "cambium-tunnel" }
+        'LAN'    { "cambium-server" }
+        'Tunnel' { "cambium-server-tunnel" }
         'Auto'   { Get-CambiumRoute }
     }
 
-    $label = if ($sshHost -eq "cambium") { "[LAN]" } else { "[TUNNEL]" }
-    $desc = if ($sshHost -eq "cambium") { "shop network" } else { "Cloudflare tunnel" }
+    $label = if ($sshHost -eq "cambium-server") { "[LAN]" } else { "[TUNNEL]" }
+    $desc = if ($sshHost -eq "cambium-server") { "shop network" } else { "Cloudflare tunnel" }
 
     if (-not $Silent) {
         Write-Host "$label Connecting via $desc" -ForegroundColor $(if ($sshHost -eq "cambium") { "Green" } else { "Yellow" })

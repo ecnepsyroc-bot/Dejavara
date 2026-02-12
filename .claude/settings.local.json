@@ -7,7 +7,16 @@
       "Bash(ASPNETCORE_ENVIRONMENT=Development dotnet run:*)",
       "Bash(curl:*)",
       "Bash(tasklist:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(git submodule status:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)",
+      "Bash(net view:*)",
+      "Bash(dir:*)",
+      "Bash(ssh:*)",
+      "Bash(winget search:*)",
+      "Bash(ssh cambium-server-tunnel \"powershell -Command \"\"Start-Process syncthing -WindowStyle Hidden; Start-Sleep 5; Get-Content $env:LOCALAPPDATA\\\\Syncthing\\\\config.xml | Select-String ''device id''\"\"\")",
+      "Bash(cmd /c \"dir P:\\\\ /b\")",
+      "Bash(ipconfig:*)"
     ]
   }
 }
