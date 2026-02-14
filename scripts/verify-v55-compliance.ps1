@@ -1,5 +1,5 @@
-# C:\Dev\Dejavara\scripts\verify-v54-compliance.ps1
-# V5.4.4 Compliance Verification Script
+# C:\Dev\Dejavara\scripts\verify-v55-compliance.ps1
+# V5.5.5 Compliance Verification Script
 # Run after migration to verify full compliance
 
 param(
@@ -15,33 +15,56 @@ $stats = @{
     ParentProjects = 0
     ChildProjects = 0
     TotalFOs = 0
-    V54IndexCount = 0
+    V554IndexCount = 0
+    ReadmeCount = 0
 }
 
-Write-Host "=== V5.4.4 Compliance Verification ===" -ForegroundColor Cyan
+Write-Host "=== V5.5.5 Compliance Verification ===" -ForegroundColor Cyan
 Write-Host ""
 
-# Required folders for v5.4.1
+# Required folders for v5.5 (14 top-level)
 $requiredFolders = @(
     "00-contract", "01-admin", "02-financial", "03-cad", "04-drawings",
     "05-materials", "06-samples", "07-production", "08-buyout",
     "09-coordination", "10-site", "11-awmac", "_archive", "_cambium"
 )
 
+# v5.5.5 required subfolders
+$v554RequiredSubfolders = @(
+    "01-admin/ccn/_received",
+    "01-admin/email-disputes",
+    "01-admin/rfi/_received",
+    "01-admin/rfi/_template",
+    "01-admin/submittal/_source",
+    "01-admin/submittal/_received",
+    "01-admin/submittal/_template",
+    "05-materials/powdercoating",
+    "06-samples/powdercoating",
+    "08-buyout/quotes",
+    "09-coordination/doors",
+    "09-coordination/doors/_received",
+    "09-coordination/doors/_source",
+    "09-coordination/doors/_template",
+    "11-awmac/_template"
+)
+
 # Deprecated folders that should NOT exist
 # v5.4.1: ifc, ift, scope removed
-# v5.4.4: transmittal, 04-drawings/submittal removed
+# v5.4.2: transmittal, 04-drawings/submittal removed
 # v5.4.4: 11-awmac/ consolidated to 4 subfolders
+# v5.5.5: email renamed to email-disputes, _cambium/qr removed
 $deprecatedFolders = @(
     "00-contract/ifc",
     "00-contract/ift",
     "00-contract/scope",
     "01-admin/transmittal",
+    "01-admin/email",
     "04-drawings/submittal",
     "11-awmac/gis-reports",
     "11-awmac/inspections",
     "11-awmac/monitoring",
-    "11-awmac/reports"
+    "11-awmac/reports",
+    "_cambium/qr"
 )
 
 function Test-ProjectCompliance {
@@ -61,15 +84,23 @@ function Test-ProjectCompliance {
         }
     }
 
+    # Check v5.5.5 required subfolders
+    foreach ($subfolder in $v554RequiredSubfolders) {
+        $subfolderPath = Join-Path $ProjectPath $subfolder
+        if (-not (Test-Path $subfolderPath)) {
+            $script:warnings += "$ProjectName`: Missing v5.5.5 subfolder: $subfolder"
+        }
+    }
+
     # Check _cambium/index.json
     $indexPath = Join-Path $ProjectPath "_cambium/index.json"
     if (Test-Path $indexPath) {
         try {
             $index = Get-Content $indexPath -Raw | ConvertFrom-Json
-            if ($index.version -eq "5.4.4") {
-                $script:stats.V54IndexCount++
+            if ($index.version -eq "5.5.5") {
+                $script:stats.V554IndexCount++
             } else {
-                $issues += "index.json version is $($index.version), expected 5.4.4"
+                $issues += "index.json version is $($index.version), expected 5.5.5"
             }
         } catch {
             $issues += "index.json is invalid JSON"
@@ -96,7 +127,7 @@ function Test-ProjectCompliance {
         $script:warnings += "$ProjectName`: $($rootFiles.Count) file(s) in inbox (project root)"
     }
 
-    # Check for deprecated folders (should not exist in v5.4.1)
+    # Check for deprecated folders (should not exist)
     foreach ($deprecated in $script:deprecatedFolders) {
         $deprecatedPath = Join-Path $ProjectPath $deprecated
         if (Test-Path $deprecatedPath) {
@@ -104,61 +135,42 @@ function Test-ProjectCompliance {
         }
     }
 
+    # Check for README system (optional but recommended)
+    $rootReadme = Join-Path $ProjectPath "_README.txt"
+    if (Test-Path $rootReadme) {
+        $script:stats.ReadmeCount++
+    }
+
     return $issues
 }
 
-# Scan all projects (including nested in parent folders)
-function Scan-ProjectsRecursive {
-    param([string]$Path, [int]$Depth = 0)
+# Scan all projects (flat structure per v5.4.4+ spec)
+function Scan-ProjectsFlat {
+    param([string]$Path)
 
-    $items = Get-ChildItem -Path $Path -Directory | Where-Object { $_.Name -notmatch "^_" -and $_.Name -notmatch "^\d{2}-" }
+    $items = Get-ChildItem -Path $Path -Directory | Where-Object { $_.Name -notmatch "^_" }
 
     foreach ($item in $items) {
         $projectPath = $item.FullName
         $projectName = $item.Name
 
-        # Check if this is a v5.4 project (has _cambium folder)
+        # Check if this is a v5.5 project (has _cambium folder)
         $hasCambium = Test-Path (Join-Path $projectPath "_cambium")
 
         if ($hasCambium) {
             $stats.TotalProjects++
 
-            # Check if it's a parent project (has children property in index.json)
-            $indexPath = Join-Path $projectPath "_cambium/index.json"
-            $isParent = $false
-            if (Test-Path $indexPath) {
-                try {
-                    $index = Get-Content $indexPath -Raw | ConvertFrom-Json
-                    if ($index.type -eq "parent" -or $index.children) {
-                        $isParent = $true
-                        $stats.ParentProjects++
-                    }
-                } catch {}
-            }
-
-            if ($Depth -gt 0) {
-                $stats.ChildProjects++
-            }
-
-            $displayName = if ($Depth -gt 0) { "  -> $projectName" } else { $projectName }
-            $issues = Test-ProjectCompliance -ProjectPath $projectPath -ProjectName $projectName -IsChild ($Depth -gt 0)
+            $issues = Test-ProjectCompliance -ProjectPath $projectPath -ProjectName $projectName
 
             if ($issues.Count -eq 0) {
                 $stats.CompliantProjects++
-                Write-Host "$displayName" -ForegroundColor Green -NoNewline
-                if ($isParent) { Write-Host " (parent)" -ForegroundColor DarkCyan }
-                else { Write-Host "" }
+                Write-Host "$projectName" -ForegroundColor Green
             } else {
-                Write-Host "$displayName" -ForegroundColor Yellow
+                Write-Host "$projectName" -ForegroundColor Yellow
                 foreach ($issue in $issues) {
                     Write-Host "    - $issue" -ForegroundColor DarkYellow
                     $errors += "$projectName`: $issue"
                 }
-            }
-
-            # If it's a parent, scan children
-            if ($isParent) {
-                Scan-ProjectsRecursive -Path $projectPath -Depth ($Depth + 1)
             }
         }
     }
@@ -166,23 +178,27 @@ function Scan-ProjectsRecursive {
 
 Write-Host "Scanning projects in $ProjectsRoot..." -ForegroundColor White
 Write-Host ""
-Scan-ProjectsRecursive -Path $ProjectsRoot
+Scan-ProjectsFlat -Path $ProjectsRoot
 
 # Scan FO folders
 Write-Host ""
 Write-Host "Scanning FO folders in $FORoot..." -ForegroundColor White
-$foFolders = Get-ChildItem -Path $FORoot -Directory | Where-Object { $_.Name -notmatch "^_" }
-foreach ($fo in $foFolders) {
-    $stats.TotalFOs++
-    $foPath = $fo.FullName
+if (Test-Path $FORoot) {
+    $foFolders = Get-ChildItem -Path $FORoot -Directory | Where-Object { $_.Name -notmatch "^_" }
+    foreach ($fo in $foFolders) {
+        $stats.TotalFOs++
+        $foPath = $fo.FullName
 
-    # Check for Shops subfolder
-    $shopsPath = Join-Path $foPath "Shops"
-    if (-not (Test-Path $shopsPath)) {
-        $warnings += "FO $($fo.Name): Missing Shops subfolder"
+        # Check for Shops subfolder
+        $shopsPath = Join-Path $foPath "Shops"
+        if (-not (Test-Path $shopsPath)) {
+            $warnings += "FO $($fo.Name): Missing Shops subfolder"
+        }
     }
+    Write-Host "Found $($stats.TotalFOs) FO folder(s)" -ForegroundColor Green
+} else {
+    Write-Host "FO root not found: $FORoot" -ForegroundColor DarkGray
 }
-Write-Host "Found $($stats.TotalFOs) FO folder(s)" -ForegroundColor Green
 
 # Check templates
 Write-Host ""
@@ -197,7 +213,7 @@ if (Test-Path $templatesPath) {
         }
     }
 } else {
-    $errors += "Missing C:\FO\_templates folder"
+    $warnings += "Missing C:\FO\_templates folder"
 }
 
 # Summary
@@ -207,9 +223,8 @@ Write-Host ""
 Write-Host "Projects:" -ForegroundColor White
 Write-Host "  Total: $($stats.TotalProjects)" -ForegroundColor White
 Write-Host "  Compliant: $($stats.CompliantProjects)" -ForegroundColor $(if ($stats.CompliantProjects -eq $stats.TotalProjects) { "Green" } else { "Yellow" })
-Write-Host "  Parent projects: $($stats.ParentProjects)" -ForegroundColor Cyan
-Write-Host "  Child projects: $($stats.ChildProjects)" -ForegroundColor Cyan
-Write-Host "  V5.4.4 index.json: $($stats.V54IndexCount)" -ForegroundColor $(if ($stats.V54IndexCount -eq $stats.TotalProjects) { "Green" } else { "Yellow" })
+Write-Host "  V5.5.5 index.json: $($stats.V554IndexCount)" -ForegroundColor $(if ($stats.V554IndexCount -eq $stats.TotalProjects) { "Green" } else { "Yellow" })
+Write-Host "  With README system: $($stats.ReadmeCount)" -ForegroundColor $(if ($stats.ReadmeCount -gt 0) { "Cyan" } else { "DarkGray" })
 
 $compliancePercent = if ($stats.TotalProjects -gt 0) { [math]::Round(($stats.CompliantProjects / $stats.TotalProjects) * 100, 1) } else { 0 }
 Write-Host ""
@@ -242,7 +257,7 @@ if ($warnings.Count -gt 0) {
 
 Write-Host ""
 if ($compliancePercent -ge 95 -and $errors.Count -eq 0) {
-    Write-Host "V5.4.4 MIGRATION COMPLETE" -ForegroundColor Green
+    Write-Host "V5.5.5 MIGRATION COMPLETE" -ForegroundColor Green
 } else {
-    Write-Host "V5.4.4 MIGRATION INCOMPLETE - Review errors above" -ForegroundColor Yellow
+    Write-Host "V5.5.5 MIGRATION INCOMPLETE - Review errors above" -ForegroundColor Yellow
 }

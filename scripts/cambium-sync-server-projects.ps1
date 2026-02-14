@@ -27,8 +27,8 @@ if (-not (Test-Path $source)) {
 
 Write-Output "$(Get-Date): Starting sync from $source to $destination" | Out-File $logFile -Append
 
-# Robocopy mirror mode
-robocopy $source $destination /MIR /Z /W:5 /R:3 /MT:8 /XD "$destination\_sync-logs" /LOG+:$logFile /NP /NDL /TEE
+# Robocopy — copy new/updated files from server, never delete local files
+robocopy $source $destination /E /Z /W:5 /R:3 /MT:8 /XO /XD "$destination\_sync-logs" /LOG+:$logFile /NP /NDL /TEE
 
 $exitCode = $LASTEXITCODE
 

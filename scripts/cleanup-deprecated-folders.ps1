@@ -1,8 +1,9 @@
 # C:\Dev\Dejavara\scripts\cleanup-deprecated-folders.ps1
-# V5.4.3 Deprecated Folder Cleanup
+# V5.5 Deprecated Folder Cleanup
 # v5.4.1: ifc/, ift/, scope/ removed from 00-contract/
 # v5.4.2: transmittal/ removed, 04-drawings/submittal/ removed
-# v5.4.3: 11-awmac/ consolidated to 4 subfolders
+# v5.4.4: 11-awmac/ consolidated to 4 subfolders
+# v5.5: No new deprecations (additive release)
 
 param(
     [string]$ProjectsRoot = "C:\Projects",
@@ -25,7 +26,7 @@ $removed = 0
 $movedFiles = 0
 $skipped = 0
 
-Write-Host "Cleaning up deprecated folders (v5.4.3)..." -ForegroundColor Cyan
+Write-Host "Cleaning up deprecated folders (v5.5)..." -ForegroundColor Cyan
 if ($DryRun) {
     Write-Host "(DRY RUN - no changes will be made)" -ForegroundColor Yellow
 }

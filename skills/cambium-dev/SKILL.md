@@ -308,3 +308,70 @@ This ensures QR codes work from anywhere, including during Cambium-server downti
 - **App:** `https://cambium-production.up.railway.app`
 - **Health:** `https://cambium-production.up.railway.app/api/health`
 - **Database:** `trolley.proxy.rlwy.net:44567` (postgres/railway)
+
+## 10. SSH Escaping for Agentic Workflows
+
+### The Problem
+
+When OpenClaw (or Claude Code) executes SSH commands, there are **4 escaping layers**:
+
+```text
+Local Shell (bash/Git Bash) → SSH → Remote cmd.exe → Remote PowerShell
+```
+
+This causes issues with:
+
+1. **`$` variables get mangled**: `$_.Name` becomes `extglob.Name` (bash interprets `$_`)
+2. **Nested quotes get stripped**: Each layer consumes one level of quotes
+
+### Quick Reference
+
+| Command Type                      | Pattern              | Example                                              |
+|-----------------------------------|----------------------|------------------------------------------------------|
+| Simple (no `$`, no inner quotes)  | Double quotes        | `ssh host "schtasks /run /tn TaskName"`              |
+| Has `$` variables                 | Single quotes outer  | `ssh host 'powershell "Where-Object { $_.Name }"'`   |
+| Has inner quotes                  | Escape with `\"`     | `ssh host 'powershell "... -like \"*pattern*\" "'`   |
+
+### Correct Patterns
+
+**Simple commands (no `$`, no nested quotes):**
+
+```bash
+ssh cambium-server-tunnel "schtasks /run /tn Cambium_Sync"
+ssh cambium-server-tunnel "powershell -Command \"Get-Content C:\tmp\sync-log.txt -Tail 5\""
+```
+
+**Commands with PowerShell variables (`$_`, `$env:`, etc.):**
+
+```bash
+# WRONG - $_ gets mangled by local bash
+ssh host "powershell -Command \"Get-Service | Where-Object { $_.Name -like '*Cambium*' }\""
+
+# CORRECT - single quotes prevent bash expansion
+ssh host 'powershell -Command "Get-Service | Where-Object { $_.Name -like \"*Cambium*\" }"'
+```
+
+**Commands with nested single quotes:**
+
+```bash
+# Use escaped double quotes inside
+ssh host 'powershell -Command "Write-Host \"Hello World\""'
+```
+
+### When Using cambium-ssh.ps1
+
+The wrapper script handles escaping correctly when called from PowerShell:
+
+```powershell
+.\cambium-ssh.ps1 -Command 'Get-Service | Where-Object { $_.Name -like "*Cambium*" }'
+```
+
+But if called via bash (e.g., from OpenClaw's exec tool), wrap appropriately:
+
+```bash
+powershell -File C:\Dev\Dejavara\scripts\cambium-ssh.ps1 -Command 'Get-Content C:\tmp\sync-log.txt -Tail 5'
+```
+
+### Reference
+
+Full documentation: `~/.claude/projects/c--Dev-Dejavara/memory/cambium-server-sync.md` → "SSH Escaping Issues"

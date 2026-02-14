@@ -1,5 +1,5 @@
 # C:\Dev\Dejavara\scripts\update-index-versions.ps1
-# Update all project index.json files to version 5.4.3
+# Update all project index.json files to version 5.5
 
 param(
     [string]$ProjectsRoot = "C:\Projects",
@@ -10,7 +10,7 @@ $updated = 0
 $skipped = 0
 $errors = 0
 
-Write-Host "Updating index.json versions to 5.4.3..." -ForegroundColor Cyan
+Write-Host "Updating index.json versions to 5.5..." -ForegroundColor Cyan
 if ($DryRun) {
     Write-Host "(DRY RUN - no changes will be made)" -ForegroundColor Yellow
 }
@@ -29,11 +29,11 @@ function Update-IndexVersion {
         $content = Get-Content $indexPath -Raw
         $json = $content | ConvertFrom-Json
 
-        if ($json.version -eq "5.4.3") {
+        if ($json.version -eq "5.5") {
             return "skip"
         }
 
-        $json.version = "5.4.3"
+        $json.version = "5.5"
 
         if (-not $script:DryRun) {
             $json | ConvertTo-Json -Depth 10 | Set-Content $indexPath -Encoding UTF8
@@ -65,7 +65,7 @@ function Scan-Projects {
                     $script:updated++
                 }
                 "skip" {
-                    Write-Host "  Already 5.4.3: $projectName" -ForegroundColor DarkGray
+                    Write-Host "  Already 5.5: $projectName" -ForegroundColor DarkGray
                     $script:skipped++
                 }
                 "error" {
@@ -85,5 +85,5 @@ Scan-Projects -Path $ProjectsRoot
 Write-Host ""
 Write-Host "=== COMPLETE ===" -ForegroundColor Cyan
 Write-Host "Updated: $updated" -ForegroundColor Green
-Write-Host "Already 5.4.3: $skipped" -ForegroundColor DarkGray
+Write-Host "Already 5.5: $skipped" -ForegroundColor DarkGray
 Write-Host "Errors: $errors" -ForegroundColor $(if ($errors -gt 0) { "Red" } else { "DarkGray" })
