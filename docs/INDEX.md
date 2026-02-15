@@ -1,4 +1,4 @@
-# Dejavara Platform Documentation Index
+﻿# Dejavara Platform Documentation Index
 
 ## Platform Overview
 
@@ -52,6 +52,13 @@ AutoHotkey scripts for AutoCAD panning.
 
 ---
 
+
+---
+
+## Infrastructure
+
+- [TOPOLOGY.md](TOPOLOGY.md) - Complete network map (home, shop, 3-2-1 pipeline)
+- [NETWORK-AUDIT-2026-02-10.md](NETWORK-AUDIT-2026-02-10.md) - Shop network audit
 ## Architecture & Planning
 
 - [Simplification Spec](SIMPLIFICATION-SPEC.md) - Codebase simplification plan
@@ -68,3 +75,4 @@ AutoHotkey scripts for AutoCAD panning.
 | Phteah-pi | Mixed | ~6,000 | Home automation |
 
 **Total:** ~971,000 lines of code
+
