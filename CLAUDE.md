@@ -17,13 +17,35 @@ Master orchestration platform with domains for work and home.
 ## Architecture
 
 ```
-Dejavara (Master)
-├── OpenClaw/        ← AI brain, orchestrates everything
-├── Cambium/         ← Work: millwork factory systems
-├── Phteah-pi/       ← Home: Raspberry Pi server
-├── FileOrganizer/   ← Shared: file organization
-└── AutoCAD-AHK/     ← Shared: AutoCAD panning scripts
+C:\Dev\
+├── Dejavara/           # THIS REPO - master monorepo
+│   ├── OpenClaw/       ← AI brain (SUBMODULE)
+│   ├── Cambium/        ← Work: millwork factory (SUBMODULE)
+│   ├── Phteah-pi/      ← Home: Pi server (SUBMODULE)
+│   ├── FileOrganizer/  ← File organization (SUBMODULE)
+│   ├── AutoCAD-AHK/    ← AutoCAD scripts (SUBMODULE)
+│   ├── deploy/         ← Skills, identity → syncs to Pi
+│   └── scripts/        ← Workstation ops scripts
+├── AutoCAD-tools/      # Standalone (not submodule)
+└── llm-council/        # Standalone (not submodule)
 ```
+
+## CRITICAL: Prevent Dev Environment Divergence
+
+**DO NOT:**
+
+- Clone Cambium, OpenClaw, or Phteah-pi as standalone repos outside Dejavara
+- Create alternate dev roots (`C:\Users\cory\Dev\`, etc.)
+- Add circular submodule references (e.g., Cambium containing Dejavara)
+- Scatter scripts to `C:\scripts\` or other locations
+
+**ALWAYS:**
+
+- Work within `C:\Dev\Dejavara\{submodule}` for all submodule work
+- Push from within submodules, then update Dejavara's ref
+- Keep workstation scripts in `C:\Dev\Dejavara\scripts\`
+
+This structure was consolidated on 2026-02-14 after 25+ GB of duplicate repos had drifted apart.
 
 ## Domain Boundaries
 
