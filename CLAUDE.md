@@ -80,6 +80,18 @@ This structure was consolidated on 2026-02-14 after 25+ GB of duplicate repos ha
 
 **Use `--no-verify` sparingly** - Only for submodule reference updates when hooks fail on non-code changes.
 
+## CRITICAL: Keep Infrastructure Docs Current
+
+When making changes to deployed infrastructure (Phteah-Pi, Cambium server, etc.), **always update the corresponding build/inventory docs before reporting completion**.
+
+### Phteah-Pi doc chain (all must stay in sync):
+- `Phteah-pi/docs/BUILD.md` — hardware/software inventory of the live Pi
+- `Phteah-pi/docs/PORT-REGISTRY.md` — port assignments
+- `Phteah-pi/CLAUDE.md` — service list and platform overview
+- `Phteah-pi/README.md` — user-facing services table and roadmap
+
+If you add a container, change a port, modify storage, or alter network config — update all affected docs in the same session. Docs that drift from reality are worse than no docs.
+
 ## Quick Navigation
 
 - Work tasks → `Cambium/CLAUDE.md`
