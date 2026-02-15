@@ -38,7 +38,9 @@
       "Bash(netstat:*)",
       "Bash(start:*)",
       "Bash(powershell -NoProfile -Command 'Get-Process ssh -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -gt \\(Get-Date\\).AddHours\\(-1\\) } | Select-Object Id, StartTime')",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(powershell -c:*)",
+      "Bash(scp:*)"
     ]
   }
 }
