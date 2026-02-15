@@ -6,3 +6,4 @@ nul
 
 # Build artifacts
 deploy/skills.b64
+.vscode/

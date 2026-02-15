@@ -8,7 +8,7 @@ Master orchestration platform with domains for work and home.
 
 | Component | Purpose | Details |
 |-----------|---------|---------|
-| OpenClaw | Central AI controller | Claude API-powered assistant |
+| OpenClaw | Central AI controller | Gateway on Pi, node on laptop. See `OpenClaw/CLAUDE.md` |
 | Cambium | Work domain | See `Cambium/CLAUDE.md` |
 | Phteah-pi | Home domain | See `Phteah-pi/CLAUDE.md` |
 | FileOrganizer | Shared utility | File organization across domains |
