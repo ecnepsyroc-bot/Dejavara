@@ -3,3 +3,6 @@ nul
 # Editor/tooling
 .clj-kondo/
 .lsp/
+
+# Build artifacts
+deploy/skills.b64
