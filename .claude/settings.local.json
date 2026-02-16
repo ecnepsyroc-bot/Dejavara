@@ -42,7 +42,16 @@
       "Bash(powershell -c:*)",
       "Bash(scp:*)",
       "Bash(git submodule update:*)",
-      "Bash(powershell -NoProfile -Command:*)"
+      "Bash(powershell -NoProfile -Command:*)",
+      "Bash(powershell -File:*)",
+      "Bash(tree:*)",
+      "Bash(grep:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(npm test:*)",
+      "Bash(pnpm exec tsc:*)",
+      "Bash(echo:*)",
+      "Bash(pnpm build:*)"
     ]
   }
 }
