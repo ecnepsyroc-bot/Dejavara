@@ -52,7 +52,11 @@
       "Bash(pnpm exec tsc:*)",
       "Bash(echo:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet ef database update:*)",
+      "Bash(dotnet ef migrations script:*)",
+      "Bash(dotnet run:*)"
     ]
   }
 }
