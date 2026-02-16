@@ -51,7 +51,8 @@
       "Bash(npm test:*)",
       "Bash(pnpm exec tsc:*)",
       "Bash(echo:*)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash(pnpm test:*)"
     ]
   }
 }

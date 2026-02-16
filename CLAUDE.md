@@ -92,6 +92,10 @@ When making changes to deployed infrastructure (Phteah-Pi, Cambium server, etc.)
 
 If you add a container, change a port, modify storage, or alter network config — update all affected docs in the same session. Docs that drift from reality are worse than no docs.
 
+## Debugging Approach
+
+When debugging, exhaust source code analysis before asking the user to test anything. You have filesystem access — read the code, trace the execution path, check configs. Only ask the user to intervene for things that require a browser or physical access you genuinely don't have.
+
 ## Quick Navigation
 
 - Work tasks → `Cambium/CLAUDE.md`
