@@ -60,7 +60,15 @@
       "Bash(Select-String -Pattern \"Status|Last Run Time|Next Run Time|Last Result\")",
       "Bash(dotnet nuget search:*)",
       "Bash(npm run verify:*)",
-      "Bash(git submodule foreach:*)"
+      "Bash(git submodule foreach:*)",
+      "Bash(nslookup:*)",
+      "Bash(explorer \"\\\\Server\\\\Projects\")",
+      "Bash(cmdkey /list:*)",
+      "Bash(klist purge:*)",
+      "Bash(rundll32.exe keymgr.dll,KRShowKeyMgr)",
+      "Bash(cmd.exe:*)",
+      "Bash(explorer \"\\\\\\\\Server\\\\Projects\")",
+      "Bash(cmd //c \"net use P: \\\\\\\\Server\\\\Projects /persistent:yes\")"
     ]
   }
 }
