@@ -66,7 +66,7 @@ This structure was consolidated on 2026-02-14 after 25+ GB of duplicate repos ha
 **Commit order for submodules:**
 
 ```text
-1. AutoCAD-Tools (if changed) → commit & push
+1. OpenClaw (if changed) → commit & push
 2. Cambium (if changed) → commit & push
 3. Dejavara → commit & push (updates submodule refs)
 ```
@@ -77,6 +77,16 @@ This structure was consolidated on 2026-02-14 after 25+ GB of duplicate repos ha
 - Reduces risk of losing work
 - Keeps working directory clean
 - Makes code review possible
+
+**Before ending any session, verify all repos are clean:**
+
+```bash
+# Run from Dejavara root - checks all submodules
+git submodule foreach --recursive "git status --porcelain"
+git status --porcelain
+```
+
+If anything appears, commit and push it. Do NOT end a session with uncommitted changes.
 
 **Use `--no-verify` sparingly** - Only for submodule reference updates when hooks fail on non-code changes.
 
