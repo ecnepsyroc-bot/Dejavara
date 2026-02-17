@@ -58,7 +58,8 @@
       "Bash(dotnet ef migrations script:*)",
       "Bash(dotnet run:*)",
       "Bash(Select-String -Pattern \"Status|Last Run Time|Next Run Time|Last Result\")",
-      "Bash(dotnet nuget search:*)"
+      "Bash(dotnet nuget search:*)",
+      "Bash(npm run verify:*)"
     ]
   }
 }
