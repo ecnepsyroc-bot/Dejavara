@@ -68,7 +68,8 @@
       "Bash(rundll32.exe keymgr.dll,KRShowKeyMgr)",
       "Bash(cmd.exe:*)",
       "Bash(explorer \"\\\\\\\\Server\\\\Projects\")",
-      "Bash(cmd //c \"net use P: \\\\\\\\Server\\\\Projects /persistent:yes\")"
+      "Bash(cmd //c \"net use P: \\\\\\\\Server\\\\Projects /persistent:yes\")",
+      "Bash(robocopy:*)"
     ]
   }
 }
