@@ -7,3 +7,4 @@ nul
 # Build artifacts
 deploy/skills.b64
 .vscode/
+.claude/settings.local.json
