@@ -14,6 +14,9 @@ Track custom skills and their revision status.
 | session-to-skill | 1.0.0 | 2026-02-08 | 2026-03-08 | Active |
 | postgres-failover-sync | 1.1.0 | 2026-02-13 | 2026-03-13 | Active |
 | postgres-remote-ops | 1.0.0 | 2026-02-13 | 2026-03-13 | Active |
+| millwork-file-management | 1.0.0 | 2026-02-17 | 2026-03-17 | Active |
+| autocad-plugin-development | 1.0.0 | 2026-02-18 | 2026-03-18 | Active |
+| cambium-platform | 1.0.0 | 2026-02-18 | 2026-03-18 | Active |
 | cambium-hosting | - | - | - | Planned |
 
 ## Revision Schedule
@@ -32,6 +35,43 @@ When reviewing a skill:
 5. Update version number and dates
 
 ## Changelog
+
+### 2026-02-18
+
+- Created `autocad-plugin-development` skill v1.0.0
+  - Based on Luxify (Feature Millwork production plugin)
+  - Target: .NET Framework 4.8 (AutoCAD 2022-2025), NOT .NET 8
+  - `IExtensionApplication` initialization with assembly resolver
+  - Bundle deployment to `C:\ProgramData\Autodesk\ApplicationPlugins\`
+  - `PackageContents.xml` for auto-loading
+  - Transaction patterns with `using` statements
+  - Document locking for event/async contexts
+  - Block creation and attribute population
+  - WPF palette with MVVM and theme detection
+  - Build script with AutoCAD process check
+
+- Created `cambium-platform` skill v1.0.0
+  - Feature Millwork unified automation platform
+  - Hexagonal architecture: 16 modules + 7 adapters
+  - Tech stack: .NET 8/10, React 19, PostgreSQL, SignalR
+  - Core systems: Botta e Risposta, Luxify, Laminate Inventory
+  - 91 database entities, 64 REST endpoints
+  - Domain vocabulary: FO, Badge, Provenance/Availability flags
+  - Command Bridge: Named pipe IPC to AutoCAD
+  - Production systems protection (laminate inventory, Luxify)
+
+### 2026-02-17
+
+- Created `millwork-file-management` skill v1.0.0
+  - Based on Cambium Documentation Standards v5.7.0
+  - 12-folder project structure (00-11) + `_archive` and `_cambium`
+  - Job number format: YY## (4-digit)
+  - Naming pattern: `{job}-{type}-{seq}-R{#}-{date}`
+  - Factory Order dual-location (`C:\FO\` + project `07-production/`)
+  - Three underscore patterns: `_source/`, `_received/`, `_template/`
+  - AWMAC 4-subfolder structure
+  - SOURCE_DWG traceability (FO vs SUB modes)
+  - Revision control with `revision-log.json`
 
 ### 2026-02-13
 - Created `postgres-remote-ops` skill v1.0.0
