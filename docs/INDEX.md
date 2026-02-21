@@ -59,6 +59,7 @@ AutoHotkey scripts for AutoCAD panning.
 
 - [TOPOLOGY.md](TOPOLOGY.md) - Complete network map (home, shop, 3-2-1 pipeline)
 - [NETWORK-AUDIT-2026-02-10.md](NETWORK-AUDIT-2026-02-10.md) - Shop network audit
+- [WORKSTATION-OPS.md](WORKSTATION-OPS.md) - Laptop power config, lid actions, Modern Standby notes
 ## Architecture & Planning
 
 - [Simplification Spec](SIMPLIFICATION-SPEC.md) - Codebase simplification plan
