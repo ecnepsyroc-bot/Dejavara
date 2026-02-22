@@ -60,6 +60,15 @@ services.AddScoped<IJobService, JobService>();
 
 **Yes — ALREADY PRACTICING.** Continue applying during module migration.
 
+## Cambium Architectural Context
+
+Two generations of code coexist (see `docs/architecture/CLEAN-ARCHITECTURE-AUDIT.md`):
+
+- **Gen 2 (target)**: Modules like Jobs and Inventory follow SOLID well — single-purpose use cases (`CreateJobUseCase`), interface segregation (`IJobService`, `IJobRepository`), and dependency inversion (controllers depend on abstractions). The "Where We Align" examples above come from Gen 2 code.
+- **Gen 1 (dominant)**: ~44 managers in `Cambium.Core/Managers/` violate SRP (each manager handles CRUD, mapping, and queries), violate DIP (direct `CambiumDbContext` injection), and have broad interfaces (`IJobsManager` with many methods). `GisSpecificationsManager` at 1,142 lines is the most acute SRP violation.
+
+As Gen 1 managers migrate to Gen 2 modules, SOLID compliance improves naturally — each module's Ports/Adapters structure enforces separation and inversion.
+
 ## Key Terms
 
 | Term        | Definition                                        |

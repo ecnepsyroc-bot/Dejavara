@@ -21,7 +21,7 @@ API-First treats the API as a first-class product. You design the API contract (
 
 **Evidence**:
 
-- `src/Cambium.Api/Controllers/` — 46 controllers with REST patterns
+- `src/Cambium.Api/Controllers/` — ~55 controllers with REST patterns
 - Endpoint patterns: `GET /api/jobs`, `POST /api/jobs`, `PUT /api/jobs/{id}`
 
 ### Where We Dont
@@ -40,6 +40,15 @@ API-First treats the API as a first-class product. You design the API contract (
 - API documentation is frequently requested
 
 **Quick win**: Add Swashbuckle for auto-generated OpenAPI docs.
+
+## Cambium Architectural Context
+
+Two generations of code coexist (see `docs/architecture/CLEAN-ARCHITECTURE-AUDIT.md`):
+
+- **Gen 2 (target)**: Controllers inject module service interfaces (`IJobService`) and delegate to use case classes. API contracts are defined by the module's inbound port, not by the controller.
+- **Gen 1 (dominant)**: Controllers inject legacy manager interfaces (`IJobsManager`) that combine query, command, and mapping logic. The API surface is implementation-driven rather than contract-driven.
+
+Both generations use thin controllers (~55 total) that contain no business logic — the difference is whether the injected service is a clean port or a monolithic manager. The controller layer itself is well-structured regardless of generation.
 
 ## Key Terms
 

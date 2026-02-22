@@ -42,6 +42,20 @@ Frameworks        -> src/Cambium.Api/, src/Cambium.Data/
 
 **Yes — aligned via hexagonal adoption.** Same principles, different terminology.
 
+## Cambium Architectural Context
+
+Two generations of code coexist (see `docs/architecture/CLEAN-ARCHITECTURE-AUDIT.md`):
+
+- **Gen 2 (target)**: Modules like Jobs, Inventory, and Badges follow Clean Architecture's layering — pure domain entities, use case classes, outbound ports, and adapter implementations. The mapping above describes this generation.
+- **Gen 1 (dominant)**: ~44 managers in `Cambium.Core/Managers/` directly inject `CambiumDbContext`, collapsing the Use Case and Interface Adapter layers into a single infrastructure-coupled service. Gen 1 entities in `Cambium.Data/Entities/` are persistence models with `[Table]`/`[Column]` annotations — they occupy the Interface Adapter ring, not the Entity ring.
+
+**Dependency rule violations** (structural, from `.csproj` references):
+- `Cambium.Core` -> `Cambium.Data` (application layer -> infrastructure)
+- `Cambium.Core` -> `Cambium.Module.Chat` (application layer -> domain module)
+- `Cambium.Module.Inventory` -> `Cambium.Data` (domain -> infrastructure, mitigated by `Reconstitute()` pattern)
+
+When Gen 1 managers are migrated to Gen 2 modules, these violations will be eliminated. The Gen 2 path is proven; the migration is incremental per `docs/MODULE-MIGRATION-PATTERN.md`.
+
 ## Key Terms
 
 | Term                   | Definition                                         |

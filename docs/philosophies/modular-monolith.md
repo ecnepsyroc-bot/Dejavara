@@ -48,6 +48,15 @@ Cambium.Module.Specifications - GIS specifications
 
 **Yes — ALREADY COMMITTED.** Shared DbContext is acceptable trade-off for FK integrity.
 
+## Cambium Architectural Context
+
+Two generations of code coexist (see `docs/architecture/CLEAN-ARCHITECTURE-AUDIT.md`):
+
+- **Gen 2 (target)**: The 12 modules listed above are the modular-monolith structure. Each has `MODULE.md` boundaries, Domain/Ports/Adapters, and defined ownership. `Cambium.Module.Staging` has its own `StagingDbContext` — the proof-of-concept for per-module database contexts.
+- **Gen 1 (dominant)**: ~44 managers in `Cambium.Core/Managers/` operate outside module boundaries. All share a monolithic `CambiumDbContext` with 80+ `DbSet<>` properties covering all domain areas. This is the primary gap in the modular monolith claim — module boundaries are enforced in code structure but not at the data layer.
+
+When Gen 1 managers are migrated to Gen 2 modules, each module will own its tables explicitly. ADR-0004 documents the plan to pilot `LaminateDbContext` extraction as the next step toward per-module data isolation.
+
 ## Key Terms
 
 | Term                       | Definition                                                      |

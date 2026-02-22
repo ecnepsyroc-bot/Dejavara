@@ -37,13 +37,31 @@ modules/Cambium.Module.{Name}/
 
 ### Where We Dont (Gaps)
 
-- **~38 managers in Core**: `src/Cambium.Core/Managers/` not yet migrated
+- **~44 managers in Core**: `src/Cambium.Core/Managers/` not yet migrated
 - **Some EF annotations in Domain**: Should be in DbContext OnModelCreating
 - **Entities in Cambium.Data**: Should eventually move to module Domain folders
 
 ### Compliance Desirable?
 
 **Yes — ALREADY COMMITTED.** Continue migration per `docs/MODULE-MIGRATION-PATTERN.md`.
+
+## Cambium Architectural Context
+
+Two generations of code coexist in Cambium (see `docs/architecture/CLEAN-ARCHITECTURE-AUDIT.md`):
+
+| | Gen 1 (legacy, dominant) | Gen 2 (target, partial) |
+|---|---|---|
+| **Pattern** | Manager with direct `CambiumDbContext` | Domain entity + Ports + Adapters + Events |
+| **Entity** | EF model in `Cambium.Data/Entities/` | Pure POCO in `modules/*/Domain/Entities/` |
+| **App logic** | Manager in `Cambium.Core/Managers/` | UseCase in `Cambium.Core/UseCases/` |
+| **Data access** | Direct `CambiumDbContext` injection | `IRepository` outbound port |
+| **Example** | `JobsManager.cs` | `Laminate.cs` + `ILaminateRepository.cs` |
+
+**What this means for hexagonal architecture:**
+- The "Where We Align" section above describes Gen 2 modules only (Jobs, Inventory, Badges fully comply)
+- Gen 1 (~44 managers) has no ports, no adapters, and no domain isolation — it does not follow hexagonal architecture
+- Gen 1 is the dominant code path today; Gen 2 is the target
+- Migration follows `docs/MODULE-MIGRATION-PATTERN.md`: dual-interface implementation allows incremental replacement
 
 ## Key Terms
 

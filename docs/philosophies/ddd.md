@@ -32,17 +32,28 @@ DDD is an approach to software development that centers the design on the busine
 ### Where We Dont
 
 - **No aggregate roots**: Entities arent clustered with enforced invariants
-- **No domain events (internal)**: SignalR events are UI notifications, not domain events
-- **Anemic domain model**: Business logic often in services, not entities
+- **Domain events narrow**: `IEventBus` + `InMemoryEventBus` exist and publish 4 Job lifecycle events (`JobCreated`, `JobRenamed`, `JobArchived`, `JobDeleted`), but broader event adoption is Phase 1 contracts only. SignalR is a separate UI broadcast layer, not the domain event bus.
+- **Anemic domain model (Gen 1)**: Gen 1 entities in `Cambium.Data/Entities/` are pure data bags with no behavior
 - **No domain services**: Complex domain logic not encapsulated
+
+**Rich domain entity example (Gen 2)**: `modules/Cambium.Module.Inventory/Domain/Entities/Laminate.cs` — private setters, `Create()` factory method, `Reconstitute()` for ORM hydration, `ComputeStockStatus()` behavior, and `SampleInfo` as a value object (C# `record`). This is a textbook DDD entity.
 
 ### Compliance Desirable?
 
 Selectively. Adopt for new complex domains:
 
 - **Aggregates**: For modules with complex invariants (Purchasing?)
-- **Domain events**: If audit requirements grow
-- **Rich domain model**: Move validation logic into entities
+- **Domain events**: Expand `IEventBus` adoption as modules migrate from Gen 1 to Gen 2
+- **Rich domain model**: Follow the `Laminate.cs` pattern for new domain entities
+
+## Cambium Architectural Context
+
+Two generations of code coexist (see `docs/architecture/CLEAN-ARCHITECTURE-AUDIT.md`):
+
+- **Gen 2 (target)**: Domain entities like `Laminate.cs` have behavior, encapsulation, and factory methods — genuine DDD entities. `SampleInfo` is a proper value object. Repository interfaces (`ILaminateRepository`) abstract persistence. The "Where We Align" section above primarily describes this generation.
+- **Gen 1 (dominant)**: ~80 entity classes in `Cambium.Data/Entities/` are anemic persistence models — `[Table]`/`[Column]` attributes, public setters, no behavior methods. Business logic lives in managers, not entities. This is the anti-pattern DDD explicitly warns against.
+
+When Gen 1 entities are migrated, each will gain behavior methods, factory methods, and encapsulation following the `Laminate.cs` pattern.
 
 ## Key Terms
 

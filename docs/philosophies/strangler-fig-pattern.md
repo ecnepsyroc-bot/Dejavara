@@ -42,7 +42,7 @@ services.AddScoped<IBadgesManager>(sp => sp.GetRequiredService<BadgeService>());
 **Progress**:
 
 - ~12 modules created
-- ~38 managers still in Core awaiting migration
+- ~44 managers still in Core awaiting migration
 - Gradual replacement in progress
 
 ### Where We Dont
@@ -52,6 +52,15 @@ services.AddScoped<IBadgesManager>(sp => sp.GetRequiredService<BadgeService>());
 ### Compliance Desirable?
 
 **Yes — ALREADY PRACTICING.** Continue per `docs/MODULE-MIGRATION-PATTERN.md`.
+
+## Cambium Architectural Context
+
+The Strangler Fig pattern is the mechanism for Cambium's Gen 1 -> Gen 2 migration (see `docs/architecture/CLEAN-ARCHITECTURE-AUDIT.md`):
+
+- **Gen 1 (host tree)**: ~44 managers in `Cambium.Core/Managers/` — direct `CambiumDbContext` injection, no ports, no domain isolation. This is the legacy system being strangled.
+- **Gen 2 (strangler fig)**: 12 modules in `modules/Cambium.Module.*/` — hexagonal architecture with Domain/Ports/Adapters. This is the replacement growing alongside Gen 1.
+- **Dual-interface facade**: The migration pattern uses `FooService : IFooService, IFooManager` — the new service implements both the module interface and the legacy manager interface. This is the "facade/router" that directs traffic to old or new code.
+- **Current progress**: 3 modules fully migrated (Jobs, Badges, Inventory have complete hexagonal structure). Remaining managers are strangled incrementally, one at a time.
 
 ## Key Terms
 
