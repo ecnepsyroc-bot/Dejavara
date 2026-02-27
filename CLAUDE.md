@@ -102,6 +102,12 @@ When making changes to deployed infrastructure (Phteah-Pi, Cambium server, etc.)
 
 If you add a container, change a port, modify storage, or alter network config — update all affected docs in the same session. Docs that drift from reality are worse than no docs.
 
+### Cambium Shop Server (cambium-server) — DEPRECATED
+- Windows 10 at 192.168.0.108, accessible via Chrome Remote Desktop
+- CambiumApi on DEJAVARA serves the shop floor (localhost:5001 → Cloudflare tunnel). cambium-server is not needed as an API host.
+- Has stale CambiumApi service (disabled, DI bug). Treat as dead unless explicitly revived.
+- If repurposed in future, needs full rebuild from Dejavara monorepo — current directory layout is diverged.
+
 ## Debugging Approach
 
 When debugging, exhaust source code analysis before asking the user to test anything. You have filesystem access — read the code, trace the execution path, check configs. Only ask the user to intervene for things that require a browser or physical access you genuinely don't have.
