@@ -8,3 +8,7 @@ nul
 deploy/skills.b64
 .vscode/
 .claude/settings.local.json
+
+# MCP plugin artifacts
+.playwright-mcp/
+.test_hash/
