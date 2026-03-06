@@ -10,14 +10,19 @@ Track custom skills and their revision status.
 | aspnet-dataprotection-db | 1.0.0 | 2026-02-08 | 2026-03-08 | Active |
 | cloudflare-tunnel | 1.0.0 | 2026-02-08 | 2026-03-08 | Active |
 | dev-passwords | 1.0.0 | 2026-02-08 | 2026-03-08 | Active |
-| railway-deploy | 1.1.0 | 2026-02-13 | 2026-03-13 | Active |
+| railway-deploy | 1.1.0 | 2026-02-13 | 2026-03-13 | Superseded by cambium-railway-ops |
 | session-to-skill | 1.0.0 | 2026-02-08 | 2026-03-08 | Active |
 | postgres-failover-sync | 1.1.0 | 2026-02-13 | 2026-03-13 | Active |
 | postgres-remote-ops | 1.0.0 | 2026-02-13 | 2026-03-13 | Active |
 | millwork-file-management | 1.0.0 | 2026-02-17 | 2026-03-17 | Active |
 | autocad-plugin-development | 1.0.0 | 2026-02-18 | 2026-03-18 | Active |
-| cambium-platform | 1.0.0 | 2026-02-18 | 2026-03-18 | Active |
+| cambium-platform | 1.1.0 | 2026-03-05 | 2026-04-05 | Active |
 | cambium-auth-credentials | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
+| aspnet-api-development | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
+| agentic-coding-workflow | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
+| cambium-railway-ops | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
+| cambium-database-migrations | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
+| cambium-permissions-log | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
 | cambium-hosting | - | - | - | Planned |
 
 ## Revision Schedule
@@ -36,6 +41,44 @@ When reviewing a skill:
 5. Update version number and dates
 
 ## Changelog
+
+### 2026-03-05 (skills update session)
+- Updated `cambium-platform` to v1.1.0
+  - Module count corrected to 20 (was 16) with Status and MODULE.md columns
+  - Client table verified: 8 clients (bom-manager confirmed phantom — removed)
+  - Database counts: 117 migrations, 182 DbSets (91 unique types)
+  - Railway schema drift section: 109/164 tables present, 55 missing
+  - EF Core version conflict documented (22 MSB3277 warnings)
+  - Adapter count corrected to 8 (was 7, adds SpecToAutoCAD)
+  - Known violations and build status sections added
+- Created `aspnet-api-development` skill v1.0.0
+  - Smart PolicyScheme (JWT/Cookie selector) with code pattern
+  - EF Core column-drift failure pattern (42703 → cascading 500s)
+  - Self-healing startup pattern (individual try/catch per ALTER)
+  - Post-heal schema verification pattern
+  - Railway connection string parsing (DATABASE_URL URI → Npgsql)
+  - DataProtection key persistence to database
+- Created `agentic-coding-workflow` skill v1.0.0
+  - Permissions Log Protocol (AUDIT.log format)
+  - Verification-Before-Implementation Protocol
+  - Multi-Model Workflow (Claude.ai + Claude Code)
+  - Pre-Railway-Push Gate
+  - Session End Protocol
+- Created `cambium-railway-ops` skill v1.0.0 (supersedes `railway-deploy`)
+  - Variable Reference rule (DATABASE_URL must be `${{Postgres.DATABASE_URL}}`)
+  - Schema check documentation (scripts/check-railway-schema.sql)
+  - Deployment sequence with log patterns to watch
+  - Credential rotation procedures with blast radius analysis
+- Created `cambium-database-migrations` skill v1.0.0
+  - The v5 pattern: no MigrateAsync (deliberate)
+  - Column-drift failure chain documentation
+  - 6 highest-drift-risk user columns identified
+  - When to use migration vs ALTER TABLE self-healing
+  - Manual migration application workflow
+- Created `cambium-permissions-log` skill v1.0.0
+  - AUDIT.log format specification and action types
+  - Session templates (verification, implementation, skills)
+  - Rules for autonomous action logging
 
 ### 2026-03-05
 - Created `cambium-auth-credentials` skill v1.0.0

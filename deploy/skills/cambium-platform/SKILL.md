@@ -60,7 +60,7 @@ Cambium/
 │   │   ├── Cambium.Data/             # EF Core + PostgreSQL
 │   │   └── Cambium.Shared/           # DTOs, contracts
 │   │
-│   ├── modules/                      # 16 hexagonal modules
+│   ├── modules/                      # 20 hexagonal modules
 │   │   ├── Cambium.Module.Chat/      # Messaging
 │   │   ├── Cambium.Module.Jobs/      # Job management
 │   │   ├── Cambium.Module.Badges/    # Badge system
@@ -69,11 +69,12 @@ Cambium/
 │   │   ├── Cambium.Module.Workflow/  # Process automation
 │   │   └── ...
 │   │
-│   ├── adapters/                     # 7 cross-module bridges
-│   │   ├── SpecToMaster/             # Specs → AutoCAD
+│   ├── adapters/                     # 8 cross-module bridges
+│   │   ├── SpecToAutoCAD/            # Specs → AutoCAD (intentional cross-context read)
+│   │   ├── SpecToMaster/             # Specs → AutoCAD masters
 │   │   ├── JobToChat/                # Job events → Notifications
-│   │   ├── MasterToSheet/            # Masters → Sheets
-│   │   ├── SheetToPdf/               # Sheets → PDF output
+│   │   ├── MasterToSheet/            # Masters → Sheets (placeholder)
+│   │   ├── SheetToPdf/               # Sheets → PDF output (placeholder)
 │   │   └── ...
 │   │
 │   ├── clients/                      # React frontends
@@ -105,38 +106,73 @@ Cambium/
 Module A ──event──► Adapter ──command──► Module B
 ```
 
-### Active Modules (16)
+### Modules (20)
 
-| Module | Purpose |
-|--------|---------|
-| `Cambium.Module.Chat` | Real-time messaging |
-| `Cambium.Module.Jobs` | Job lifecycle |
-| `Cambium.Module.Badges` | Badge domain logic |
-| `Cambium.Module.Inventory` | Laminate tracking |
-| `Cambium.Module.Staging` | Pre-production workflow |
-| `Cambium.Module.Workflow` | Visual workflow engine |
-| `Cambium.Module.Documents` | Document management |
-| `Cambium.Module.DrawingCheckout` | Drawing access control |
-| `Cambium.Module.Production` | Manufacturing workflow |
-| `Cambium.Module.Specifications` | Material specs |
-| `Cambium.Module.Bom` | Bill of Materials |
-| `Cambium.Courier` | Shipping/contacts |
-| `Cambium.PdfLibrary` | PDF utilities |
-| `Cambium.Sheets` | Sheet management |
+| Module | Status | Has MODULE.md |
+|--------|--------|---------------|
+| `Cambium.Module.Badges` | Active | No |
+| `Cambium.Module.Bom` | Building | No |
+| `Cambium.Module.Chat` | Active | No |
+| `Cambium.Module.Courier` | Building | No |
+| `Cambium.Module.Directory` | Building | No |
+| `Cambium.Module.Documents` | Building | No |
+| `Cambium.Module.DrawingCheckout` | Building | No |
+| `Cambium.Module.Inventory` | **PRODUCTION** | No |
+| `Cambium.Module.Jobs` | Building | No |
+| `Cambium.Module.Locations` | Building | No |
+| `Cambium.Module.Production` | Active | No |
+| `Cambium.Module.Purchasing` | Building | No |
+| `Cambium.Module.Samples` | Building | No |
+| `Cambium.Module.Specifications` | Building | No |
+| `Cambium.Module.Staging` | Active | No |
+| `Cambium.Module.Workflow` | Building | No |
+| `Cambium.Courier` | Building | No |
+| `Cambium.PdfLibrary` | Building | No |
+| `Cambium.Sheets` | Building | No |
+| `Cambium.Workflow` | Stub | No |
 
-### Active Adapters (7)
+4 `.module.md` files exist in `Cambium.DocumentManagement/Modules/` (Drawings, ExternalRefs, Projects, Submittals). 11 `.adapter.md` files exist in `adapters/`.
 
-| Adapter | From → To |
-|---------|-----------|
-| `SpecToMaster` | Specifications → AutoCAD masters |
-| `FlagToOverlay` | Spec flags → AutoCAD overlays |
-| `JobToChat` | Job events → Chat notifications |
-| `DrawingCheckoutToChat` | Drawing changes → Notifications |
-| `MasterToSheet` | Masters → Sheet generation |
-| `SheetToPdf` | Sheets → PDF output |
-| `StagingToProduction` | Staging → Production promotion |
+### Adapters (8)
+
+| Adapter | From → To | Notes |
+|---------|-----------|-------|
+| `SpecToAutoCAD` | Specifications → AutoCAD | Intentional cross-context read (documented exception) |
+| `SpecToMaster` | Specifications → AutoCAD masters | |
+| `FlagToOverlay` | Spec flags → AutoCAD overlays | |
+| `JobToChat` | Job events → Chat notifications | |
+| `DrawingCheckoutToChat` | Drawing changes → Notifications | |
+| `MasterToSheet` | Masters → Sheet generation | Placeholder — implement or remove |
+| `SheetToPdf` | Sheets → PDF output | Placeholder — implement or remove |
+| `StagingToProduction` | Staging → Production promotion | |
 
 ## Database Schema (PostgreSQL)
+
+### Verified Counts
+
+| Item | Count | Notes |
+|------|-------|-------|
+| Migrations | 117 | Date range 2025-12-23 → 2026-03-04 |
+| DbSets | 182 total (91 unique types) | Multiple aliases for same types |
+| Railway tables present | 109 | Deployed and queryable |
+| Railway tables missing | 55 | Unshipped features — safe if no code queries them |
+
+### Railway Schema Drift (CRITICAL)
+
+55 tables exist as EF entity classes but have NO corresponding Railway tables. Any endpoint querying these will 500 on Railway.
+
+**High-risk missing groups:**
+- GIS Specifications (9 tables)
+- Cutting/Ardis workflow (4 tables)
+- Purchasing (6 tables)
+- Drawings subsystem (5 tables)
+- FO extensions: `fo_parts`, `fo_checkpoints`, `fo_status_history`, `fo_sequences`, `project_factory_orders`, `projects` — **MEDIUM RISK** — FO module is active
+
+**Pre-push safety:** Always run `scripts/check-railway-schema.sql` before `git push origin main`.
+
+### EF Core Version Conflict
+
+5 projects pin EF Core 8.0.11 while the solution resolves 8.0.24. This causes 22 MSB3277 warnings (verified from pre-push hook). Fix is tracked as Action 8-9 in remediation plan. `Directory.Build.props` with `TreatWarningsAsErrors` has been committed.
 
 ### Core Entities (91 tables)
 
@@ -358,7 +394,6 @@ Item (Credenza, Reception Desk)
 | 5174 | Workflow Builder | React dev |
 | 5175 | Document Creator | React dev |
 | 5176 | Document Staging | React dev |
-| 5177 | BOM Manager | React dev |
 | 5432 | PostgreSQL | Database |
 
 ## Build Commands
@@ -473,6 +508,35 @@ col1 || col2                   -- NOT col1 + col2
 -- Booleans
 TRUE / FALSE                   -- NOT 1 / 0
 ```
+
+## Clients (8 + shared lib)
+
+| Client | Shared lib | Own axios | Status |
+|--------|-----------|-----------|--------|
+| app | Yes | No | Active |
+| laminate-inventory | Yes | Yes | **PRODUCTION** |
+| admin | No | Yes | Active |
+| document-creator | Yes | Yes | Active |
+| purchasing-ledger | No | Yes | Active |
+| compliance-audit | No | No | Active |
+| quick-reference | Yes | No | Active |
+| workflow-builder | No | Yes | Active |
+| shared | — | — | Library (not a client) |
+
+**Note:** `bom-manager` does not exist. It is a phantom reference from earlier documentation. Remove all references.
+
+## Known Violations
+
+- **Unqualified property names** across entity files (`Code`, `Status`, `Type`, `Name`, `Number`) — exact count varies by audit run, bulk rename is Action 12 in remediation plan
+- **Event schema `Bridge/` types:** mutable classes with logic (violates declarative-only pattern)
+- **2 missing CLAUDE.md files:** `Cambium/` directory and `AutoCAD-Tools/`
+
+## Build Status
+
+- Pre-push git hook runs `dotnet build` in Release mode
+- 22 pre-existing MSB3277 warnings (EF Core version conflict — see above)
+- 167 tests pass
+- Zero-warnings policy: documented in CLAUDE.md, enforced via `Directory.Build.props` (`TreatWarningsAsErrors=true`)
 
 ## Philosophy
 

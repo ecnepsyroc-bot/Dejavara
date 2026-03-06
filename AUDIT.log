@@ -1,0 +1,12 @@
+[2026-03-05T23:45:00Z] SESSION_START | Skills update session — updating 1 existing, creating 5 new skills
+[2026-03-05T23:45:01Z] YOLO          | MODIFIED: deploy/skills/cambium-platform/SKILL.md — updated module count, client count, migration count, Railway drift state, build status
+[2026-03-05T23:45:02Z] YOLO          | CREATED: deploy/skills/aspnet-api-development/SKILL.md — dual auth, column-drift, self-healing, DataProtection
+[2026-03-05T23:45:03Z] YOLO          | CREATED: deploy/skills/agentic-coding-workflow/SKILL.md — permissions log, verification protocol, pre-push gate
+[2026-03-05T23:45:04Z] YOLO          | CREATED: deploy/skills/cambium-railway-ops/SKILL.md — Railway operations (4 reference files)
+[2026-03-05T23:45:05Z] YOLO          | CREATED: deploy/skills/cambium-railway-ops/references/variable-references.md
+[2026-03-05T23:45:06Z] YOLO          | CREATED: deploy/skills/cambium-railway-ops/references/schema-check.md
+[2026-03-05T23:45:07Z] YOLO          | CREATED: deploy/skills/cambium-railway-ops/references/deployment-sequence.md
+[2026-03-05T23:45:08Z] YOLO          | CREATED: deploy/skills/cambium-railway-ops/references/credential-rotation.md
+[2026-03-05T23:45:09Z] YOLO          | CREATED: deploy/skills/cambium-database-migrations/SKILL.md — EF Core migration management
+[2026-03-05T23:45:10Z] YOLO          | CREATED: deploy/skills/cambium-permissions-log/SKILL.md — AUDIT.log protocol
+[2026-03-05T23:45:11Z] YOLO          | MODIFIED: deploy/skills/SKILLS-REGISTRY.md — 5 new Active, 1 Superseded, 1 updated
