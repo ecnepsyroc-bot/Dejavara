@@ -1,7 +1,7 @@
 # Sync Server Projects to Local Mirror
 # Runs Mon-Fri at 8:00 AM, 11:00 AM, 3:00 PM
 # Source: P:\ (\\Server\Projects)
-# Destination: D:\Server-Mirror\
+# Destination: C:\Server-Mirror\
 
 $source = "P:\"
 $destination = "C:\Server-Mirror"
@@ -27,7 +27,7 @@ if (-not (Test-Path $source)) {
 Write-Output "$(Get-Date): Starting sync from $source to $destination" | Out-File $logFile
 
 # Robocopy mirror mode
-# /MIR = Mirror (copies new/changed, deletes removed)
+# /E = Copy subdirectories (non-destructive, doesn't delete)
 # /Z = Restartable mode (for large files over network)
 # /W:5 = Wait 5 seconds between retries
 # /R:3 = Retry 3 times
@@ -38,7 +38,7 @@ Write-Output "$(Get-Date): Starting sync from $source to $destination" | Out-Fil
 # /NP = No progress (cleaner logs)
 # /NDL = No directory list (less verbose)
 
-robocopy $source $destination /MIR /Z /W:5 /R:3 /MT:8 /XD "$destination\_sync-logs" /LOG+:$logFile /NP /NDL /TEE
+robocopy $source $destination /E /Z /W:5 /R:3 /MT:8 /XD "$destination\_sync-logs" /LOG+:$logFile /NP /NDL /TEE
 
 $exitCode = $LASTEXITCODE
 

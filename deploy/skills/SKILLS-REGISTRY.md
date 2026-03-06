@@ -17,6 +17,7 @@ Track custom skills and their revision status.
 | millwork-file-management | 1.0.0 | 2026-02-17 | 2026-03-17 | Active |
 | autocad-plugin-development | 1.0.0 | 2026-02-18 | 2026-03-18 | Active |
 | cambium-platform | 1.0.0 | 2026-02-18 | 2026-03-18 | Active |
+| cambium-auth-credentials | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
 | cambium-hosting | - | - | - | Planned |
 
 ## Revision Schedule
@@ -35,6 +36,15 @@ When reviewing a skill:
 5. Update version number and dates
 
 ## Changelog
+
+### 2026-03-05
+- Created `cambium-auth-credentials` skill v1.0.0
+  - Dual JWT + Cookie auth documentation with code locations
+  - Railway Variable Reference rule (`${{Postgres.DATABASE_URL}}`)
+  - Admin password recovery pattern (ADMIN_DEFAULT_PASSWORD env var)
+  - Pre-push checklist derived from 3 real production incidents
+  - Credential inventory with blast radius analysis
+  - Self-healing startup block documentation (C1-C4 fixes)
 
 ### 2026-02-18
 

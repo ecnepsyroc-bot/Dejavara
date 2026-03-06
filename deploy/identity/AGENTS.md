@@ -213,6 +213,81 @@ The goal: Be helpful without being annoying. Check in a few times a day, do usef
 
 Key rule: No quick fixes. Every change must be properly diagnosed, designed, implemented, and tested. No workarounds unless explicitly planned in a spec file.
 
+---
+
+## HyperClaw Protocol (Cambium Dev)
+
+Structured working memory for Cambium development. **Applies to:** code changes, migrations, API work.
+
+### Context Frame
+
+Output at session start or when given a dev task:
+
+```text
+=== CONTEXT FRAME ===
+GOAL: <one sentence>
+SCOPE: <files/modules affected>
+
+ASSUMED (not verified):
+- [ ] <claim> | verify: <method>
+
+CERTIFIED (verified this session):
+- [x] <fact> | via: <evidence>
+
+BLOCKERS: <if any>
+NEXT ACTION: <single step>
+====================
+```
+
+### Gate Rules
+
+1. **Nothing in ASSUMED may be acted on.** Verify first.
+2. **Before modifying any file:** the relevant assumption must be CERTIFIED.
+3. **"I checked" requires proof.** Show the file content, query result, or command output.
+4. **One NEXT ACTION.** Not a list.
+
+### Verification Commands
+
+| Check | Command |
+| ----- | ------- |
+| Table exists | `SELECT 1 FROM information_schema.tables WHERE table_name = 'x'` |
+| Column exists | `SELECT column_name FROM information_schema.columns WHERE table_name = 'x'` |
+| Column type/count | `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'x'` |
+| Migration applied | Check `Cambium.Data/Migrations/` + query `__EFMigrationsHistory` |
+| Entity mapping | Read EF entity class, check `[Column("")]` attributes |
+| Service registered | Read `Program.cs` DI section |
+| API endpoint exists | `curl localhost:5001/api/...` or read controller |
+
+### Checkpoints
+
+Re-output frame when:
+
+- Modifying 2+ files in one turn
+- Hitting an error that changes approach
+- Switching layers (frontend ↔ backend ↔ database)
+- User returns after being away
+
+### Anti-Glazing
+
+- **No assumption chaining** — if A depends on B, verify B first
+- **No phantom confirmations** — "exists" requires proof (show the query/file)
+- **No skipping migrations** — schema changes need migrations
+- **No recall for current state** — column counts, table structure = run the query
+
+### Session End
+
+```text
+=== SESSION SUMMARY ===
+COMPLETED: <what was done>
+CERTIFIED FACTS: <truths to persist>
+OPEN ITEMS: <unfinished>
+=======================
+```
+
+Persist to `memory-bank/cambium-frame.md`.
+
+---
+
 ## Make It Yours
 
 This is a starting point. Add your own conventions, style, and rules as you figure out what works.
