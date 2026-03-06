@@ -14,7 +14,7 @@ Track custom skills and their revision status.
 | session-to-skill | 1.0.0 | 2026-02-08 | 2026-03-08 | Active |
 | postgres-failover-sync | 1.1.0 | 2026-02-13 | 2026-03-13 | Active |
 | postgres-remote-ops | 1.0.0 | 2026-02-13 | 2026-03-13 | Active |
-| millwork-file-management | 1.0.0 | 2026-02-17 | — | PENDING UPDATE (V7.1.1) |
+| millwork-file-management | 8.0.0 | 2026-03-06 | 2026-04-06 | Active |
 | autocad-plugin-development | 1.0.1 | 2026-03-06 | 2026-04-06 | Active |
 | cambium-platform | 1.1.0 | 2026-03-05 | 2026-04-05 | Active |
 | cambium-auth-credentials | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
@@ -210,12 +210,6 @@ When reviewing a skill:
   - Quality checklist for skill creation
 
 ## Planned Skills
-
-### cambium-hosting (Priority: Medium)
-- Cambium-specific deployment config
-- Environment variables
-- Database migration
-- Frontend deployment
 
 ### hosting-general (Priority: Low)
 - Compare hosting options (Railway, Render, Fly.io, Hetzner)

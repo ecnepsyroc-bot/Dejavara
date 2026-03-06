@@ -1,11 +1,11 @@
 ---
 name: millwork-file-management
-description: "File management system for millwork project managers. Covers folder structure creation, naming conventions, revision control, drawing organization, and inbox-to-archive workflows. Use when: creating project folders, naming files, organizing drawings, managing revisions, handling trade coordination documents, tracking samples/submittals, or discussing folder structure decisions. Triggers include: project template, folder structure, naming convention, revision, drawing organization, document management, AWMAC, AIA standard, inbox workflow, factory order, FO."
+description: "File management system for millwork project managers (v8.0 DRAFT). Covers folder structure creation, naming conventions, revision control, drawing organization, DXF production geometry, transmittals, README deployment, pre-FO staging, and inbox-to-archive workflows. Use when: creating project folders, naming files, organizing drawings, managing revisions, handling trade coordination documents, tracking samples/submittals, AWMAC documentation, specification pipeline, DXF files, transmittal packages, global FO index, pre-FO cutlists, README deployment, or discussing folder structure decisions. Triggers include: project template, folder structure, naming convention, revision, drawing organization, document management, AWMAC, GIS, MSE, specification pipeline, sample tracking, DXF, transmittal, global FO, pre-FO staging, ifc-working, README, deploy-readmes, agreement_scope, powdercoating finish."
 ---
 
 # Millwork File Management
 
-File organization system for Feature Millwork project managers (v5.7.0), based on AIA/AWMAC standards.
+File organization system for Feature Millwork project managers (v8.0.0), based on Feature Millwork Documentation Standards V8.0.0.
 
 ## Core Principles
 
@@ -13,360 +13,437 @@ File organization system for Feature Millwork project managers (v5.7.0), based o
 |-----------|-------------|
 | Document-type organization | Files organized by *what they are*, not who created them |
 | Machine-parseable naming | Filenames follow patterns that regex can extract |
-| Dual-location architecture | Projects in full paths, FOs in short paths |
+| Dual-location architecture | Projects at `C:\Projects\`, FOs at `C:\FO\` |
 | Drawing-to-fabrication linkage | FO# links the production chain |
 | Folder as source of truth | Database indexes filesystem, never overrides it |
+| Every folder earns its place | Empty folders waste attention; `_README.txt` answers "What goes here?" |
 
 ## Dual-Location Architecture
 
-| Root | Path | Purpose | Char Budget |
-|------|------|---------|-------------|
-| **Projects** | `C:\Projects\` | Full project documentation | ~200 chars |
-| **Factory Orders** | `C:\FO\` | ARDIS, CNC, machine files | ~240 chars |
+| Root | Path | Purpose |
+|------|------|---------|
+| **Projects** | `C:\Projects\` | Full project documentation (15 folders) |
+| **Factory Orders** | `C:\FO\` | ARDIS, CNC, DXF, machine files |
 
-**Why two locations?** ARDIS and legacy CNC software have path length limitations. A shallow `C:\FO\` root prevents path overflow.
+**Why two locations?** ARDIS has strict path-length limits (<70 characters). `C:\FO\` keeps paths short.
 
-## Project Template (12 Folders + 2 System)
-
-**Location:** `C:\Projects\{jobnumber}-{jobname}\`
-
-**Root = inbox.** Any file sitting directly at project root is unsorted and must be dealt with immediately.
+### Pre-FO Staging Workflow
 
 ```
-{jobnumber}-{jobname}/                      ← INBOX: unsorted = action needed NOW
-│
-├── 00-contract/
-│   ├── addenda/
-│   ├── agreement/
-│   ├── drawings/                           ← Architect drawings (IFT, reference — NOT IFC)
-│   ├── insurance/
-│   └── specifications/
-│
-├── 01-admin/
-│   ├── ccn/
-│   │   └── _received/
-│   ├── certs/                              ← AWMAC-MSE-Cert.pdf
-│   ├── change-order/
-│   │   └── _received/
-│   ├── close-out/
-│   ├── deficiencies/
-│   ├── email-disputes/
-│   ├── field-notice/
-│   ├── install/
-│   ├── meeting-minutes/
-│   ├── rfi/
-│   │   ├── _received/
-│   │   └── _template/
-│   ├── rfp/
-│   ├── schedule/
-│   ├── shipping/
-│   ├── site-instruction/
-│   └── submittal/
-│       ├── _source/
-│       │   └── sub-001/
-│       ├── _received/
-│       └── _template/
-│
-├── 02-financial/
-│   ├── budget/
-│   ├── invoices/
-│   ├── po-log/
-│   └── progress-claims/
-│
-├── 03-cad/
-│   ├── archive/
-│   ├── as-built/
-│   ├── coordination/
-│   ├── library/
-│   └── working/                            ← Active .dwg files (always current)
-│
-├── 04-drawings/
-│   ├── approved/
-│   ├── as-built/
-│   ├── buyout/
-│   ├── ifc/                                ← IFC sets from architects (DON'T rename)
-│   ├── install/
-│   ├── production/
-│   └── revision/
-│       └── {drawing-id}/
-│
-├── 05-materials/
-│   ├── countertops/
-│   │   ├── custom/
-│   │   ├── laminate/
-│   │   ├── porcelain/
-│   │   ├── quartz/
-│   │   ├── solid-surface/
-│   │   └── stone/
-│   ├── custom/
-│   ├── doors/
-│   ├── finish/
-│   │   ├── paint/
-│   │   └── stain/
-│   ├── glass/
-│   ├── hardware/
-│   ├── laminate/
-│   ├── metals/
-│   ├── powdercoating/
-│   ├── sheet-goods/
-│   ├── solid/
-│   ├── takeoff/
-│   ├── upholstery/
-│   └── veneer/
-│
-├── 06-samples/                             ← Mirrors 05-materials structure
-│   ├── countertops/
-│   ├── custom/
-│   ├── doors/
-│   ├── finish/
-│   ├── glass/
-│   ├── hardware/
-│   ├── laminate/
-│   ├── metals/
-│   ├── mockup/
-│   ├── powdercoating/
-│   ├── sheet-goods/
-│   ├── solid/
-│   ├── upholstery/
-│   └── veneer/
-│
-├── 07-production/
-│   ├── _fo-index.md                        ← Links FO numbers → C:\FO\ paths
-│   ├── {jobname}-cutlist.xlsx              ← Working cutlist (pre-FO#)
-│   └── {fo-number}/
-│       ├── cut-lists/
-│       ├── parts-list/
-│       ├── preglue/
-│       ├── revision/
-│       └── work-orders/
-│
-├── 08-buyout/
-│   ├── quotes/                             ← Pre-decision vendor comparison
-│   └── {vendor-name}/                      ← One folder per vendor
-│       ├── correspondence/
-│       ├── drawings/
-│       ├── po/
-│       ├── quotes/
-│       ├── wo/
-│       └── _received/
-│
-├── 09-coordination/
-│   ├── custom/
-│   ├── doors/                              ← Multi-party coordination (use transmittal with disclaimer)
-│   │   ├── _received/
-│   │   ├── _source/
-│   │   └── _template/
-│   ├── drywall/
-│   ├── electrical/
-│   ├── glazing/
-│   ├── hvac/
-│   ├── mechanical/
-│   └── plumbing/
-│
-├── 10-site/
-│   ├── measure/
-│   └── photo/
-│
-├── 11-awmac/
-│   ├── submissions/
-│   ├── qc/
-│   ├── _source/
-│   │   └── gis-001/
-│   ├── _received/
-│   └── _template/                          ← INSI, INSF, HUM forms (unsigned)
-│
-├── _archive/
-│
-└── _cambium/
-    ├── cache/
-    ├── index.json
-    └── qr/
+_fo/staging/{jobname}-cutlist.xlsx    <- Before FO number assigned
+        | (FO number assigned)
+C:\FO\{FO#}\{jobname}-cutlist.xlsx    <- After FO number assigned
 ```
 
-## Job Number Format
+## Project Template (11 Numbered + 4 System = 15 Folders)
 
-**Pattern:** `YY##` (4-digit numeric)
-- `YY` = 2-digit year
-- `##` = 2-digit sequence
-
-**Examples:**
-- `2501-chambers` (first job of 2025)
-- `2601-netflix-burbank` (first job of 2026)
-- `2615-dentons-vancouver` (15th job of 2026)
-
-No letters. No hyphens in the code. The full project name is secondary.
-
-## File Naming Convention
-
-### Universal Pattern
+**Location:** `C:\Projects\{jobnumber}_{jobname}\`
 
 ```
-[Job]-[DocType]-[Sequence]-[Revision]-[Date].[ext]
+C:\Projects\{jobnumber}_{jobname}\
+|-- _fo/                           <- Factory Orders index and status
+|   |-- _fo-index.md
+|   +-- staging/                   <- Pre-FO cutlists and planning docs
+|-- _cad_working/                  -> junction to 03_cad/working
+|-- _archive/                      <- Superseded/obsolete documents
+|-- _cambium/                      <- Cambium platform metadata
+|   |-- index.json
+|   |-- cache/
+|   +-- qr/
+|-- 00_contract/                   <- Contract documents (immutable baseline)
+|   |-- addenda/
+|   |-- agreement_scope/           <- Signed contracts, LOIs, scope letters
+|   |-- drawings/                  <- Original IFC/IFT as received (immutable)
+|   |-- insurance/
+|   +-- specifications/            <- Division specs as received (immutable)
+|-- 01_admin/                      <- Contract administration (workspace)
+|   |-- ccn/
+|   |   +-- _received/
+|   |-- certs/
+|   |-- change-order/
+|   |   +-- _received/
+|   |-- close-out/
+|   |-- deficiencies/
+|   |-- email-disputes/
+|   |-- field-notice/
+|   |-- install/
+|   |-- meeting-minutes/
+|   |-- rfi/
+|   |   |-- _received/
+|   |   +-- _template/
+|   |-- rfp/
+|   |-- samples/                   -> junction to 05_samples/
+|   |-- schedule/
+|   |-- shipping/
+|   |-- site-instruction/
+|   |-- specifications/            <- Negotiation workspace (stage 2)
+|   |   +-- _received/
+|   |-- submittal/
+|   |   |-- _source/
+|   |   |-- _received/
+|   |   +-- _template/
+|   +-- transmittal/
+|       +-- _template/
+|-- 02_financial/                  <- Financial tracking
+|   |-- budget/
+|   |-- invoices/
+|   |-- po-log/
+|   +-- progress-claims/
+|-- 03_cad/                        <- CAD working files (DWG only)
+|   |-- archive/
+|   |-- as-built/
+|   |-- coordination/
+|   |-- library/
+|   +-- working/
+|-- 04_drawings/                   <- Issued PDF drawings
+|   |-- approved/
+|   |-- as-built/
+|   |-- buyout/
+|   |-- ifc-working/               <- Working IFC copies for CAD underlay
+|   |-- install/
+|   |-- production/
+|   +-- revision/
+|-- 05_samples/                    <- Production-facing sample records
+|   |-- countertops/
+|   |   |-- custom/ laminate/ porcelain/ quartz/ solid-surface/ stone/
+|   |-- custom/
+|   |-- doors/
+|   |-- finish/
+|   |   |-- paint/
+|   |   |-- powdercoating/         <- Under finish/ (it's a finish, not a material type)
+|   |   +-- stain/
+|   |-- glass/
+|   |-- hardware/
+|   |-- laminate/
+|   |-- metals/
+|   |-- mockup/
+|   |-- sheet-goods/
+|   |-- solid/
+|   |-- upholstery/
+|   +-- veneer/
+|-- 06_materials/                  <- Resolved material documentation
+|   |-- countertops/
+|   |   |-- custom/ laminate/ porcelain/ quartz/ solid-surface/ stone/
+|   |-- custom/
+|   |-- doors/
+|   |-- finish/
+|   |   |-- paint/
+|   |   |-- powdercoating/
+|   |   +-- stain/
+|   |-- glass/
+|   |-- hardware/
+|   |-- laminate/
+|   |-- metals/
+|   |-- sheet-goods/
+|   |-- solid/
+|   |-- takeoff/
+|   |-- upholstery/
+|   +-- veneer/
+|-- 07_buyout/                     <- Vendor relationships
+|   |-- quotes/
+|   +-- {vendor-name}/
+|       |-- po/
+|       |-- quotes/
+|       |-- wo/
+|       +-- _received/
+|-- 08_coordination/               <- Trade coordination
+|   |-- custom/
+|   |-- doors/
+|   |   |-- _received/
+|   |   |-- _source/
+|   |   +-- _template/
+|   |-- drywall/
+|   |-- electrical/
+|   |-- glazing/
+|   |-- hvac/
+|   |-- mechanical/
+|   +-- plumbing/
+|-- 09_site/                       <- Field documentation
+|   |-- measure/
+|   +-- photo/
++-- 10_awmac/                      <- AWMAC quality program
+    |-- submissions/
+    |-- qc/
+    |-- _source/
+    |-- _received/
+    +-- _template/
 ```
 
-**Example:** `2419-SD-1.0-R2-20260128.pdf`
+## System Folders
 
-| Segment | Format | Example |
-|---------|--------|---------|
-| **Job** | 4-digit code | `2419` |
-| **DocType** | 2-4 letter code | `SD`, `RFI`, `SUB` |
-| **Sequence** | X.0 for drawings, 3-digit for docs | `1.0`, `001` |
-| **Revision** | R0=first issue, R1=first revision | `R0`, `R1` |
-| **Date** | YYYYMMDD (no hyphens) | `20260128` |
+### _fo/ -- Factory Orders
+
+- `_fo-index.md` -- Markdown table linking FO numbers to status and `C:\FO\` locations
+- `staging/` -- Pre-FO cutlists and planning docs (before FO number assigned)
+
+When an FO number is assigned, move files from `_fo/staging/` to `C:\FO\{FO#}\`.
+
+**_fo-index.md format:**
+```markdown
+| FO# | Description | Status | Sheet Range | Location |
+|-----|-------------|--------|-------------|----------|
+| 16001 | Reception Desk | In Progress | 1.00-3.00 | C:\FO\16001 |
+|  |  |  |  |  |
+```
+
+### _cad_working/ -- CAD Junction
+
+Junction (`mklink /J`) to `03_cad/working/` for quick drafter access from project root.
+
+### _archive/ -- Superseded Documents
+
+Superseded or obsolete documents retained for audit trail. NOT for revision history (use `04_drawings/revision/`).
+
+### _cambium/ -- Platform Metadata
+
+Managed by Cambium platform. Do not edit manually. Contains `index.json` (version, project metadata), `cache/`, `qr/`.
+
+## Numbered Folder Reference
+
+| # | Folder | Scope |
+|---|--------|-------|
+| 00 | `contract/` | Immutable baseline: agreement + scope, drawings, specs, addenda, insurance |
+| 01 | `admin/` | Workspace: RFIs, submittals, COs, CCNs, transmittals, spec negotiations, email disputes |
+| 02 | `financial/` | Budget, invoices, PO log, progress claims |
+| 03 | `cad/` | Working DWGs, archive, as-built, coordination, library |
+| 04 | `drawings/` | Issued PDFs: production, ifc-working, approved, buyout, install, as-built, revision |
+| 05 | `samples/` | Production-facing sample records by material type |
+| 06 | `materials/` | Resolved material documentation by type + takeoffs |
+| 07 | `buyout/` | Vendor folders: quotes, POs, WOs, `_received/` |
+| 08 | `coordination/` | Trade coordination: doors, drywall, electrical, glazing, hvac, mechanical, plumbing |
+| 09 | `site/` | Site measurements and photos |
+| 10 | `awmac/` | AWMAC quality: submissions, QC, `_source/`, `_received/`, `_template/` (5 subfolders only) |
+
+### Key Distinctions
+
+**IFC Filing:**
+| Folder | Contents |
+|--------|----------|
+| `00_contract/drawings/` | Original IFC as received from architect (immutable) |
+| `04_drawings/ifc-working/` | Working copies used as CAD underlays/references |
+
+**Contract vs Admin:**
+- `00_contract/` = Immutable baseline. Do not edit.
+- `01_admin/` = The workspace. Submittals, RFIs, COs, negotiations.
+- A stamped submittal return is NOT a contract document.
+
+**Money:**
+- Money coming IN -> `02_financial/`
+- Money going OUT -> `07_buyout/{vendor}/`
+
+**Coordination vs Buyout:**
+- `08_coordination/` = subtrades (drywall, electrical, etc.)
+- `07_buyout/` = vendors (one folder per vendor)
+
+## Junctions
+
+| Junction | Target | Purpose |
+|----------|--------|---------|
+| `_cad_working/` | `03_cad/working/` | Quick drafter access |
+| `01_admin/samples/` | `05_samples/` | Admin workspace bridge to sample records |
+
+Junctions use absolute paths. Created via `mklink /J`.
+
+## Specification Pipeline
+
+Three-stage model for specification handling:
+
+```
+RECEIVED                    NEGOTIATED                 RESOLVED
+00_contract/specifications/ -> 01_admin/specifications/ -> 06_materials/{type}/
+(immutable baseline)          (active workspace)         (production-facing)
+```
+
+- **Stage 1 (Received):** Contract specs as received. Immutable. Dispute baseline.
+- **Stage 2 (Negotiated):** RFI clarifications, substitution requests, annotated specs. Active workspace.
+- **Stage 3 (Resolved):** Confirmed manufacturer cut sheets and data sheets, filed by material type.
+
+**Why three stages?** In a dispute you need to show: what was specified (Stage 1), how it was negotiated (Stage 2), and what was actually used (Stage 3).
+
+## Naming Conventions
 
 ### Universal Rules
 
-| Rule | Standard | Example |
-|------|----------|---------|
-| No spaces | Dashes between segments | `2419-SD-1.0-R0-20260128.pdf` |
-| Date format | YYYYMMDD (ISO 8601 compact) | `20260128` |
-| Drawing sequences | X.0 format | `1.0`, `1.1`, `2.0` |
-| Document sequences | 3-digit zero-padded | `RFI-001`, `SUB-003` |
-| Descriptions | Lowercase, hyphenated | `coffee-point-905` |
-| Status | NOT in filename — tracked separately | — |
+1. No loose files at project root -- everything goes in a folder
+2. Date format: YYYY-MM-DD or YYYYMMDD -- sorts chronologically
+3. Status tracked in database -- NOT in filenames (exception: samples retain `_STATUS` suffix)
+4. Underscores between elements -- no spaces
+5. Numbered folders use underscores: `00_contract`, `01_admin`
+6. Subfolder names use lowercase-hyphen: `change-order/`, `email-disputes/`
+7. DXF files use FO number as primary identifier: `{FO#}-{qualifier}.dxf`
 
-### Document Type Codes
+### Document Type Patterns
 
-**Shop Production:**
-| Code | Meaning | Folder Home |
-|------|---------|-------------|
-| `SD` | Shop Drawing | `04-drawings/production/` |
-| `CUT` | Cut List | `C:\FO\{FO#}\` |
-| `MAT` | Material List | `05-materials/` |
-| `HW` | Hardware Schedule | `05-materials/hardware/` |
-| `FIN` | Finish Schedule | `05-materials/finish/` |
+| # | Type | Pattern | Example | Folder |
+|---|------|---------|---------|--------|
+| 1 | RFI | `RFI-###_desc` | `RFI-007_panel-reveal.pdf` | `01_admin/rfi/` |
+| 2 | Submittal | `SUB-###_desc` | `SUB-012_reception-desk.pdf` | `01_admin/submittal/` |
+| 3 | Sample | `date_desc_supplier_STATUS` | `2026-01-28_walnut_windsor_PENDING.pdf` | `05_samples/{type}/` |
+| 4 | Shop Drawing | `JobCode-SD-###-R#-date` | `2419-SD-001-R2-20260128.pdf` | `04_drawings/production/` |
+| 5 | Change Order | `CO-###_desc` | `CO-003_added-millwork.pdf` | `01_admin/change-order/` |
+| 6 | CCN | `CCN-###_desc` | `CCN-005_revised-panel.pdf` | `01_admin/ccn/` |
+| 7 | Meeting Minutes | `MM_date_desc` | `MM_2026-01-28_kickoff.pdf` | `01_admin/meeting-minutes/` |
+| 8 | Working Cutlist | `jobname-cutlist.xlsx` | `chambers-cutlist.xlsx` | `_fo/staging/` |
+| 9 | Template | `trade-TYPE-###-R#-template` | `feature-SUB-001-R0-template.pdf` | (per type) |
+| 10 | Site Photo | `YYYYMMDD-location-desc` | `20260211-reception-backing.jpg` | `09_site/photo/` |
+| 11 | Specification | `SPEC-###_desc` | `SPEC-001_laminate-substitution.pdf` | `01_admin/specifications/` |
+| 12 | Transmittal | `TR-###_desc_date` | `TR-005_architect_20260215.pdf` | `01_admin/transmittal/` |
 
-**Project Correspondence:**
-| Code | Meaning | Folder Home |
-|------|---------|-------------|
-| `RFI` | Request for Information | `01-admin/rfi/` |
-| `SUB` | Submittal | `01-admin/submittal/` |
-| `CO` | Change Order | `01-admin/change-order/` |
-| `SI` | Site Instruction | `01-admin/site-instruction/` |
-| `CCN` | Contemplated Change Notice | `01-admin/ccn/` |
-| `COORD` | Coordination Drawing | `09-coordination/{trade}/` |
+### AWMAC Document Types
 
-**Reference Documents:**
-| Code | Meaning | Folder Home |
-|------|---------|-------------|
-| `IFC` | Issued For Construction | `04-drawings/ifc/` |
-| `DWG` | Architectural Drawing | `00-contract/drawings/` |
-| `SPEC` | Specification | `00-contract/specifications/` |
-| `REF` | Reference Drawing | `00-contract/drawings/` |
+| Code | Full Name | Pattern | Folder |
+|------|-----------|---------|--------|
+| GIS | Grade Inspection Summary | `{Job}-GIS-###-date` | `10_awmac/submissions/` |
+| INSI | Initial Inspection | `{Job}-INSI-###-date` | `10_awmac/submissions/` |
+| INSF | Final Inspection | `{Job}-INSF-###-date` | `10_awmac/submissions/` |
+| HUM | Humidity Test | `{Job}-HUM-###-date` | `10_awmac/submissions/` |
+| MSE | Manufacturer's Statement of Exclusions | `{Job}-MSE-date` | `01_admin/certs/` |
 
-**AWMAC:**
-| Code | Meaning | Folder Home |
-|------|---------|-------------|
-| `INSI` | Initial Inspection Request | `11-awmac/submissions/` |
-| `INSF` | Final Inspection Request | `11-awmac/submissions/` |
-| `HUM` | Humidity Report | `11-awmac/submissions/` |
-| `GIS` | GIS Report | `11-awmac/_received/` |
+MSE files to `01_admin/certs/`, not `10_awmac/` -- it's a contractual certification, not an internal quality record.
 
-### By Document Type
+### Status Values (Database Metadata)
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| **RFIs** | `{job}-RFI-{###}-R{#}-{date}` | `2419-RFI-007-R0-20260128.pdf` |
-| **Submittals** | `{job}-SUB-{###}-feature-millwork-R{#}-{date}` | `2419-SUB-001-feature-millwork-R0-20260128.pdf` |
-| **Change Orders** | `{job}-CO-{###}-R{#}-{date}` | `2419-CO-003-R0-20260301.pdf` |
-| **Site Photos** | `{date}-{location}-{desc}` | `20260211-reception-backing-verification.jpg` |
-| **Working CAD** | `{jobname}` or `{jobname}-{descriptor}` | `netflix-cabinets.dwg` |
-| **Production PDF** | `FO{#}-{sheet}-{desc}-R{#}-{date}` | `FO15961-1.0-office-cabinets-R1-20260128.pdf` |
+- `PENDING` -- Awaiting response
+- `APPROVED` -- Accepted
+- `REJECTED` -- Not accepted, needs revision
+- `REVISED` -- Resubmitted after rejection
 
-## Factory Order Structure
+Status is tracked in Cambium database, NOT in filenames. Exception: samples retain `_STATUS` suffix for shop floor visibility.
 
-**Location:** `C:\FO\{fo-number}\` (FO number only, no description)
+## DXF Production Geometry
 
-- ✅ `C:\FO\15961\`
-- ❌ `C:\FO\15961_Reception-Desk\`
+**Location:** `C:\FO\{FO#}\`
+
+**Cardinal Rule:** No FO, no production. DXF files MUST be tied to a Factory Order.
+
+**Pattern:** `{FO#}-{qualifier}.dxf`
+
+| Qualifier | Purpose | Example |
+|-----------|---------|---------|
+| `1.00`, `2.00` | Sheet number (panel face) | `15961-1.00.dxf` |
+| `1.00f` | Fabrication view | `15961-1.00f.dxf` |
+| `nest` | Nesting layout | `15961-nest.dxf` |
+| `ctop` | Countertop profile | `15961-ctop.dxf` |
+| `hcut` | Hand-cut template | `15961-hcut.dxf` |
+| `edge` | Edge profile | `15961-edge.dxf` |
+| `panel` | Panel layout | `15961-panel.dxf` |
+| `custom` | Non-standard geometry | `15961-custom.dxf` |
+
+## Global Factory Order Index
+
+`P:\Projects\_fo\` provides a single-pane view of ALL active Factory Orders across all projects.
 
 ```
-C:\FO\{fo-number}\
-├── Shops/                          ← G-code output
-├── {fo-number}.pdf                 ← FO document
-├── {fo-number}.R41                 ← ARDIS program
-├── {fo-number}.xls                 ← Parts list (working)
-├── {fo-number}.csv                 ← Cut list (clean)
-├── {fo-number}_dirty.csv           ← Cut list (raw export)
-├── {fo-number}_plywoods.pdf        ← Plywood cutlist
-├── {fo-number}_solids.pdf          ← Solids cutlist
-├── {fo-number}_preglue.pdf         ← Preglue cutlist
-├── {fo-number}_layouts.pdf         ← Panel optimization
-├── Imperial_template.MCH
-├── Imperial_template.STD
-├── Imperial_template.STK
-└── Default.EDG
+P:\Projects\_fo\
+|-- 15961 -> C:\FO\15961\    (junction)
+|-- 15962 -> C:\FO\15962\    (junction)
++-- _sync.log
 ```
 
-**FO file naming:** Use bare FO number, NO `FO` prefix inside `C:\FO\`:
-- ✅ `15961.R41`, `15961.csv`, `15961_plywoods.pdf`
-- ❌ `FO15961.R41`, `fo_15961.csv`
+**Source of truth:** `C:\FO\` -- the sync script scans this directory for active FO folders (skipping `_archive/` and `_templates/`).
 
-The `FO` prefix is reserved for production PDFs (e.g., `FO15961-1.0-cabinets-R1-20260128.pdf`).
+**Sync script:** `folder_organizer/scripts/sync-global-fo.ps1` -- runs every 5 minutes via Task Scheduler.
 
-## PDF Output Modes
+| Flag | Purpose |
+|------|---------|
+| `-Install` | Register Task Scheduler job |
+| `-Uninstall` | Remove Task Scheduler job |
+| `-WhatIf` | Dry-run |
 
-| Mode | Pattern | Example | Audience |
-|------|---------|---------|----------|
-| **Submittal** | `{Job}-SUB-{###}-feature-millwork-R{#}-{date}` | `2419-SUB-001-feature-millwork-R0-20260128.pdf` | GC/architect |
-| **Production** | `FO{#}-{sheet}-{desc}-R{#}-{date}` | `FO15961-1.0-office-cabinets-R1-20260128.pdf` | Shop floor |
-| **Internal** | `{sheet}-{desc}` | `1.0-office-cabinets.pdf` | Working reference |
+## Filing Decision Guide
+
+### Quick Decision Rules
+
+| Question | Answer |
+|----------|--------|
+| **ARDIS / CNC / CSV / DXF?** | Always `C:\FO\{FO#}\` |
+| **Pre-FO cutlist (no FO# yet)?** | `_fo/staging/` |
+| **IFC set (contract original)?** | `00_contract/drawings/` |
+| **IFC set (working copy for CAD)?** | `04_drawings/ifc-working/` |
+| **Specification question?** | See Specification Pipeline |
+| **Sample work?** | `05_samples/{type}/` (admin access via `01_admin/samples/` junction) |
+| **Powdercoating?** | `05_samples/finish/powdercoating/` or `06_materials/finish/powdercoating/` |
+| **Money coming IN?** | `02_financial/` |
+| **Money going OUT?** | `07_buyout/{vendor}/` |
+| **From the field?** | `09_site/` |
+| **AWMAC related?** | `10_awmac/` |
+| **Email for disputes/legal record?** | `01_admin/email-disputes/` |
+| **Not sure?** | Check `_README.txt` inside the folder |
+
+### Filing Steps
+
+**Step 1: Who created it?**
+- I created it -> Match document type to folder (see Document Type Patterns)
+- They sent it -> Is it a contract document?
+
+**Step 2: Contract document?**
+- YES -> `00_contract/{type}/` (file as received, don't rename)
+- NO -> Is it a response to your submission?
+
+**Step 3: Response to your submission?**
+- YES -> `{folder}/_received/` (e.g., `01_admin/submittal/_received/`)
+- NO -> Determine document type and file accordingly
+
+### Quick Path Reference
+
+| I have a... | Put it in... |
+|-------------|-------------|
+| RFI I'm issuing | `01_admin/rfi/` |
+| RFI response from architect | `01_admin/rfi/_received/` |
+| Submittal package | `01_admin/submittal/` |
+| Approved submittal return | `01_admin/submittal/_received/` |
+| Transmittal | `01_admin/transmittal/` |
+| IFC set (contract original) | `00_contract/drawings/` |
+| IFC copy for CAD underlay | `04_drawings/ifc-working/` |
+| Shop drawing PDF | `04_drawings/production/` |
+| Install drawing | `04_drawings/install/` |
+| Pre-FO cutlist | `_fo/staging/` |
+| Cutlist with FO# | `C:\FO\{FO#}\` |
+| ARDIS / DXF / G-code | `C:\FO\{FO#}\` |
+| Sample record | `05_samples/{type}/` |
+| Powdercoating sample | `05_samples/finish/powdercoating/` |
+| Material data sheet | `06_materials/{type}/` |
+| Vendor quote | `07_buyout/{vendor}/quotes/` |
+| PO to vendor | `07_buyout/{vendor}/po/` |
+| Site photo | `09_site/photo/` |
+| AWMAC report | `10_awmac/submissions/` |
+| MSE certificate | `01_admin/certs/` |
 
 ## The Three Underscore Patterns
 
-### `_source/` — Working Pieces
-When you assemble an issued document by combining multiple files, keep source pieces here.
+### `_source/` -- Working Pieces
+
+Source pieces assembled into an issued document. Not for distribution.
 
 ```
-01-admin/submittal/
-├── 2419-SUB-001-feature-millwork-R0-20260210.pdf    ← Issued document
-└── _source/
-    └── sub-001/
-        ├── transmittal.pdf
-        ├── floorplan-highlighted.pdf
-        └── sd-1.0-reception-desk.pdf
+01_admin/submittal/
+|-- SUB-001_reception-desk.pdf        <- Issued document
++-- _source/
+    +-- sub-001/
+        |-- transmittal.pdf
+        +-- sd-1.0-reception-desk.pdf
 ```
 
-**Rules:**
-- Underscore prefix sorts to top, signals "not for distribution"
-- Subfolder named `{type-seq}/` to match issued document
-- Contents use descriptive names — no formal naming needed
-- Create when needed, don't pre-create empty
+**Used in:** `01_admin/submittal/`, `10_awmac/`, `08_coordination/doors/`
 
-**Used in:** `01-admin/submittal/`, `11-awmac/`, `09-coordination/doors/`
+### `_received/` -- External Documents As-Is
 
-### `_received/` — External Documents As-Is
-When external parties send documents, file them with their original naming.
+Documents from external parties, filed with their original naming. Do NOT rename.
 
 ```
-01-admin/submittal/
-├── 2419-SUB-001-feature-millwork-R0-20260210.pdf    ← What you sent
-└── _received/
-    └── FM-SD-Package-1-Reviewed-AAN.pdf              ← Their approval, their name
+01_admin/submittal/
+|-- SUB-001_reception-desk.pdf        <- What you sent
++-- _received/
+    +-- FM-SD-Package-1-Reviewed.pdf   <- Their approval, their name
 ```
 
-**Rules:**
-- Keep original filenames — do NOT rename into Feature convention
-- Create when needed, don't pre-create empty
+**Used in:** `01_admin/rfi/`, `01_admin/submittal/`, `01_admin/ccn/`, `01_admin/change-order/`, `01_admin/specifications/`, `07_buyout/{vendor}/`, `08_coordination/doors/`, `10_awmac/`
 
-**Used in:** `11-awmac/_received/`, `08-buyout/{vendor}/_received/`, `01-admin/rfi/_received/`
+### `_template/` -- Blank, Unsigned Forms
 
-### `_template/` — Blank, Unsigned Forms
-Reusable form templates ready for use.
+Reusable form templates. Never signed. On use: Save-As, swap trade->job code and template->date.
 
-```
-Pattern:   [Trade]-[Type]-[###]-R[#]-template.[ext]
-Example:   feature-RFI-001-R0-template.docx
-
-On use:    [Job]-[Type]-[###]-R[#]-[Date].[ext]
-Example:   2419-RFI-001-R0-20260210.docx
-```
-
-**Rules:**
-- Templates are NEVER signed — signatures only on dated, issued documents
-- On use: Save-As, swap trade→job code and template→date, then sign
-
-**Used in:** `01-admin/rfi/`, `01-admin/submittal/`, `11-awmac/`
+**Used in:** `01_admin/rfi/`, `01_admin/submittal/`, `01_admin/transmittal/`, `10_awmac/`
 
 ## Revision Control
 
@@ -374,118 +451,133 @@ Example:   2419-RFI-001-R0-20260210.docx
 
 | Notation | Meaning |
 |----------|---------|
-| R0 | Original issue (first release — NOT "no revision") |
+| R0 | Original issue (first release) |
 | R1 | First revision |
 | R2+ | Subsequent revisions |
 | RA, RB | Letter notation if GC requires it |
 
-**When to increment:** Any time a drawing is REISSUED to an external party or shop floor after a previous issue.
+Increment revision any time a drawing is reissued to an external party or shop floor.
 
 ### CAD File Organization
 
-**Working files** — No rev/date in filename. OneDrive version history tracks versions.
+Working files in `03_cad/working/` -- no rev/date in filename. OneDrive version history tracks versions.
+
+Archived files in `03_cad/archive/` -- dated when archived (e.g., `netflix-cabinets-20260126.dwg`).
+
+### Revision History
 
 ```
-03-cad/
-├── working/
-│   └── netflix-cabinets.dwg              ← Always current, no date
-└── archive/
-    ├── netflix-cabinets-20260126.dwg     ← Dated when archived
-    └── netflix-cabinets-20260123.dwg
+04_drawings/revision/{drawing-id}/
+|-- r0_2025-02-05.dwg
+|-- r0_2025-02-05.pdf
+|-- r1_2025-11-15.dwg
+|-- r1_2025-11-15.pdf
++-- revision-log.json
 ```
 
-**Issued snapshots** — When publishing, snapshot with rev+date:
+**Never delete superseded files.** Move to `04_drawings/revision/{drawing-id}/`.
+
+## README System
+
+V8.0 deploys `_README.txt` files to folders that benefit from filing guidance. Each answers: "What goes here? What doesn't? Example filenames."
+
+- Plain text, deployed by CLI during `create-project`, `fix`, or `deploy-readmes`
+- Content defined in `ProjectTemplate.cs` (single source of truth)
+- Not every folder gets one -- only where filing decisions aren't obvious
+- 29 folders have descriptions out of ~129 total
+- Idempotent: safe to run multiple times, existing READMEs skipped unless `--force`
+
+## Anti-Patterns
+
+| Bad | Why | Correct |
+|-----|-----|---------|
+| `PDFs/` folder | File type is redundant | `04_drawings/production/` |
+| Vendor names as top-level folders | Use buyout structure | `07_buyout/{vendor}/` |
+| `MISC/` or `OTHER/` | File properly | Use correct folder |
+| Person names as folders | Not document-type | Use correct category |
+| Loose files at project root | Root is inbox | File immediately |
+| Status in filename | Status is metadata | Track in Cambium |
+| Skip specification pipeline | Loses negotiation trail | Received -> Negotiated -> Resolved |
+| Working IFC in `00_contract/drawings/` | Contract originals are immutable | `04_drawings/ifc-working/` |
+| Extra subfolders under `10_awmac/` | Only 5 allowed | Use existing structure |
+| Pre-FO cutlists in `03_cad/working/` | Cutlists are production, not CAD | `_fo/staging/` |
+| Renaming received documents | Breaks traceability | Keep original names |
+| Powdercoating at root of samples/materials | It's a finish | `finish/powdercoating/` |
+
+## CLI Tool Commands
+
+**Tool Location:** `C:\Dev\Dejavara\Cambium\folder_organizer\Cambium.FolderOrganizer.Cli\`
+
+All migration/fix/deploy commands default to **dry-run**. Use `--execute` to apply.
+
+| Command | Purpose | Flags |
+|---------|---------|-------|
+| `create-project <name>` | Create new V8.0 project | `--base`, `--job-number`, `--name-only` |
+| `migrate <path>` | Migrate to latest version (auto-detects source) | `--execute` |
+| `deploy-readmes <path>` | Deploy `_README.txt` files | `--execute`, `--force` |
+| `create-fo <number>` | Create Factory Order folder at `C:\FO\` | `--base`, `--copy-templates` |
+| `validate <path>` | Check structure compliance | -- |
+| `fix <path>` | Create missing folders + READMEs | `--execute` |
+| `info` | Show configuration and paths | -- |
+
+### Common Workflows
+
+**New project:**
+```bash
+cd C:\Dev\Dejavara\Cambium\folder_organizer\Cambium.FolderOrganizer.Cli
+dotnet run -- create-project "2501_Harbourside-D5"
+dotnet run -- validate "C:\Projects\2501_Harbourside-D5"
+dotnet run -- create-fo 16001 --copy-templates
+```
+
+**Retrofit READMEs:**
+```bash
+dotnet run -- deploy-readmes "C:\Projects\{project}" --execute
+```
+
+**Fix broken structure:**
+```bash
+dotnet run -- validate "C:\Projects\{project}"
+dotnet run -- fix "C:\Projects\{project}" --execute
+```
+
+### Migration Paths
+
+- V6.0 -> V6.1 (direct)
+- V6.1 -> V7.0 (16 steps)
+- V7.x -> V8.0 (17 steps)
+
+V8 migration removes `07_production/` (contents to `_fo/staging/`, `04_drawings/install/`, `C:\FO\{FO#}\`), moves powdercoating under `finish/`, renames `ifc/` to `ifc-working/`, renames `agreement/` to `agreement_scope/`, renumbers 08-11 to 07-10, deploys READMEs.
+
+If `07_production/` is non-empty after automated moves, migration pauses and generates `_cambium/migration-v8-audit.txt` for manual resolution.
+
+## Factory Order Structure
+
+**Location:** `C:\FO\{fo-number}\` (FO number only, no description)
 
 ```
-04-drawings/revision/{drawing-id}/
-├── r0_2025-02-05.dwg
-├── r0_2025-02-05.pdf
-├── r1_2025-11-15.dwg
-├── r1_2025-11-15.pdf
-└── revision-log.json
+C:\FO\{fo-number}\
+|-- Shops/                          <- G-code output
+|-- {fo-number}.R41                 <- ARDIS program
+|-- {fo-number}.xls                 <- Parts list
+|-- {fo-number}.csv                 <- Cut list
++-- (template files: .MCH, .STD, .STK, .EDG)
 ```
 
-### Revision Log Schema
+FO file naming: bare FO number, NO `FO` prefix inside `C:\FO\`:
+- CORRECT: `15961.R41`, `15961.csv`
+- WRONG: `FO15961.R41`
 
-```json
-{
-  "drawing": "DEN-1832",
-  "current_revision": 2,
-  "history": [
-    { "rev": 0, "date": "2025-02-05", "note": "IFC", "by": "cory" },
-    { "rev": 1, "date": "2025-11-15", "note": "Moved to 1731", "by": "cory" },
-    { "rev": 2, "date": "2025-11-27", "note": "Finished end added", "by": "cory" }
-  ]
-}
-```
+## Version History
 
-### Superseded File Handling
+V8.0.0 supersedes V7.1.1 (2026-02-28). Key changes:
+- `07_production/` removed (contents redistributed)
+- `_fo/staging/` added for pre-FO cutlists
+- `powdercoating/` moved under `finish/` in both samples and materials
+- `ifc/` renamed to `ifc-working/`
+- `agreement/` renamed to `agreement_scope/`
+- Folders renumbered: 08->07, 09->08, 10->09, 11->10
+- `_README.txt` system introduced
+- Total: 11 numbered (00-10) + 4 system = 15 folders
 
-**NEVER delete superseded files.** Move to `04-drawings/revision/{drawing-id}/` or rename with `_SUPD` suffix. You will need the history for disputes.
-
-## AWMAC Folder (11-awmac/)
-
-**Four-Subfolder Structure:**
-
-```
-11-awmac/
-├── submissions/       ← What you send to AWMAC/GIS
-├── qc/                ← Internal quality checks, photos
-├── _source/           ← Assembly pieces for submissions
-│   └── gis-001/
-├── _received/         ← Everything back from AWMAC/GIS (keep original names)
-└── _template/         ← AWMAC forms: INSI, INSF, HUM (unsigned)
-```
-
-**AWMAC workflow sequence:**
-
-```
-0. You → AWMAC    2419-GIS-001-R0-20251029.pdf        GIS submission
-1. You → AWMAC    2419-INSI-001-R0-20251024.pdf       Initial inspection request
-2. AWMAC → You    (filed as-is in _received/)          GIS report / inspection results
-3. You → AWMAC    2419-HUM-001-R0-20260305.pdf        Humidity report
-4. You → AWMAC    2419-INSF-001-R0-20260305.pdf       Final inspection request
-```
-
-**Certificate location:** `01-admin/certs/AWMAC-MSE-Cert.pdf`
-
-## Anti-Patterns to Avoid
-
-| Bad | Why | Good |
-|-----|-----|------|
-| `PDFs/` folder | File type is redundant | `04-drawings/production/` |
-| `APPROVED` in filename | Status tracked separately | `2419-SUB-001-R0-20260210.pdf` |
-| Spaces in filenames | Breaks automated parsing | Use dashes |
-| Renaming `_received/` files | Breaks traceability | Keep original names |
-| `C:\FO\15961_Reception-Desk\` | Description in FO path | `C:\FO\15961\` |
-| `FO15961.R41` inside C:\FO\ | FO prefix redundant | `15961.R41` |
-| Files at project root | No organization | Process immediately |
-| `2026-01-28` in filenames | Hyphenated dates | `20260128` |
-
-## Quick Reference
-
-### When You Receive a Document
-
-1. What type is it? (RFI, submittal, SI, coordination...)
-2. That's the folder.
-3. Name it with the convention.
-4. External docs → `_received/` (keep original name)
-
-### When You Create a Drawing
-
-1. Save working DWG to `03-cad/working/` (no date in name)
-2. When ready: plot to `04-drawings/production/` with rev+date
-3. Archive DWG snapshot to `04-drawings/revision/{id}/`
-4. Update revision-log.json
-
-### When You Don't Know Where Something Goes
-
-Ask: *"If I needed to find this in 6 months, what would I search for?"*
-
-The answer is the folder name.
-
-## Philosophy
-
-> **Folder structure is infrastructure, not a task.**
-
-Once established, you don't think about it. Structure serves you — you don't serve structure.
+**Source:** Feature Millwork Documentation Standards v8.0.0
