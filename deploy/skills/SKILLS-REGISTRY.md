@@ -25,12 +25,12 @@ Track custom skills and their revision status.
 | cambium-permissions-log | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
 | feature-millwork-infrastructure | 1.0.0 | 2026-02-14 | 2026-04-14 | Active |
 | pm-folder-standards | 1.0.0 | 2026-02-17 | 2026-04-17 | Active |
-| awmac-naaws | 1.0.0 | — | — | Active (Claude.ai only) |
-| badge-reflex-system | 1.0.0 | — | — | Active (Claude.ai only) |
-| context-engineering | 1.0.0 | — | — | Active (Claude.ai only) |
-| mcp-server-development | 1.0.0 | — | — | Active (Claude.ai only) |
-| millwork-shop-drawings | 1.0.0 | — | — | Active (Claude.ai only) |
-| quickbooks-contractor-invoicing | 1.0.0 | — | — | Active (Claude.ai only) |
+| awmac-naaws | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
+| badge-reflex-system | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
+| context-engineering | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
+| mcp-server-development | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
+| millwork-shop-drawings | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
+| quickbooks-contractor-invoicing | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
 | cambium-hosting | - | - | - | Planned |
 
 ## Revision Schedule
@@ -49,6 +49,10 @@ When reviewing a skill:
 5. Update version number and dates
 
 ## Changelog
+
+### 2026-03-06 (Claude.ai-only skills export)
+- Exported 6 Claude.ai-only skills to local version control: awmac-naaws, badge-reflex-system, context-engineering, mcp-server-development, millwork-shop-drawings, quickbooks-contractor-invoicing
+- Status changed from "Active (Claude.ai only)" → "Active" for all 6
 
 ### 2026-03-06 (skills audit + consolidation)
 - `cambium-platform` v1.1.0: verified counts (20 modules, 8 clients, 117 migrations, 0 warnings)

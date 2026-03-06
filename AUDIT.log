@@ -29,3 +29,12 @@
 [2026-03-06T11:00:00Z] SESSION_START | Skills consolidation — registry update, commit output files
 [2026-03-06T11:01:00Z] YOLO          | MODIFIED: deploy/skills/SKILLS-REGISTRY.md — version bumps (3 skills), PENDING flag (millwork), 8 new entries (2 local + 6 Claude.ai-only), changelog
 [2026-03-06T11:02:00Z] SESSION_END   | 2 commits: output directory + registry update. 25 skills tracked (19 Active, 6 Claude.ai-only, 1 PENDING, 1 Superseded, 1 Planned). Action 2 skipped — /mnt/skills/user/ unavailable
+[2026-03-06T12:00:00Z] SESSION_START | Claude.ai-only skills export — copying 6 skills from Claude.ai download to version control
+[2026-03-06T12:00:01Z] YOLO          | CREATED: deploy/skills/awmac-naaws/SKILL.md — AWMAC/NAAWS standards reference (290 lines)
+[2026-03-06T12:00:02Z] YOLO          | CREATED: deploy/skills/badge-reflex-system/SKILL.md — smart badge system for AutoCAD (186 lines)
+[2026-03-06T12:00:03Z] YOLO          | CREATED: deploy/skills/context-engineering/SKILL.md — AI context curation patterns (212 lines)
+[2026-03-06T12:00:04Z] YOLO          | CREATED: deploy/skills/mcp-server-development/SKILL.md — MCP server development (208 lines)
+[2026-03-06T12:00:05Z] YOLO          | CREATED: deploy/skills/millwork-shop-drawings/SKILL.md — shop drawing conventions (118 lines)
+[2026-03-06T12:00:06Z] YOLO          | CREATED: deploy/skills/quickbooks-contractor-invoicing/SKILL.md — QBO contractor invoicing (200 lines)
+[2026-03-06T12:00:07Z] YOLO          | MODIFIED: deploy/skills/SKILLS-REGISTRY.md — 6 skills changed from "Active (Claude.ai only)" → "Active", dates set to 2026-03-06
+[2026-03-06T12:00:08Z] SESSION_END   | 7 files changed (6 created, 1 modified). All 25 Active skills now have local source files.
