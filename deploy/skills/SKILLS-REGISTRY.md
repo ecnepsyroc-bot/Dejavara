@@ -31,7 +31,7 @@ Track custom skills and their revision status.
 | mcp-server-development | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
 | millwork-shop-drawings | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
 | quickbooks-contractor-invoicing | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
-| cambium-hosting | - | - | - | Planned |
+| cambium-hosting | 1.0.0 | 2026-03-06 | 2026-04-06 | Active |
 
 ## Revision Schedule
 
