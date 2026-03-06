@@ -1,0 +1,8 @@
+[2026-03-06T10:00:00Z] SESSION_START | Skills audit — reviewing 11 Claude.ai skills, updating stale ones
+[2026-03-06T10:01:00Z] YOLO | CREATED: skills-for-claude-ai/01-cambium-platform.md — updated to v1.1.0, fixed 22→0 warnings, removed EF Core version conflict section, updated AutoCAD version to 2022-2026
+[2026-03-06T10:02:00Z] YOLO | CREATED: skills-for-claude-ai/02-aspnet-api-development.md — packaged from deploy/ source (already clean: dual auth, column-drift, no Rami)
+[2026-03-06T10:03:00Z] YOLO | CREATED: skills-for-claude-ai/03-agentic-coding-workflow.md — fixed "22 pre-existing MSB3277 warnings are acceptable" → "0 warnings and 0 errors"
+[2026-03-06T10:04:00Z] YOLO | CREATED: skills-for-claude-ai/04-autocad-plugin-development.md — updated AutoCAD version 2022-2025→2022-2026 in 4 locations, 2025+→2027+ in version table
+[2026-03-06T10:05:00Z] YOLO | CREATED: skills-for-claude-ai/09-millwork-file-management.md — flagged PENDING UPDATE (v5.7.0 content, V7.1.1 gaps documented in HTML comment)
+[2026-03-06T10:06:00Z] YOLO | CREATED: skills-for-claude-ai/00-UPLOAD-INSTRUCTIONS.md — upload procedure and status for all skills
+[2026-03-06T10:07:00Z] SESSION_END | 11 skills audited: 4 updated, 1 flagged PENDING, 6 Claude.ai-only (no local source). 7 output files produced.
