@@ -14,15 +14,23 @@ Track custom skills and their revision status.
 | session-to-skill | 1.0.0 | 2026-02-08 | 2026-03-08 | Active |
 | postgres-failover-sync | 1.1.0 | 2026-02-13 | 2026-03-13 | Active |
 | postgres-remote-ops | 1.0.0 | 2026-02-13 | 2026-03-13 | Active |
-| millwork-file-management | 1.0.0 | 2026-02-17 | 2026-03-17 | Active |
-| autocad-plugin-development | 1.0.0 | 2026-02-18 | 2026-03-18 | Active |
+| millwork-file-management | 1.0.0 | 2026-02-17 | — | PENDING UPDATE (V7.1.1) |
+| autocad-plugin-development | 1.0.1 | 2026-03-06 | 2026-04-06 | Active |
 | cambium-platform | 1.1.0 | 2026-03-05 | 2026-04-05 | Active |
 | cambium-auth-credentials | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
-| aspnet-api-development | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
-| agentic-coding-workflow | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
+| aspnet-api-development | 1.1.0 | 2026-03-06 | 2026-04-06 | Active |
+| agentic-coding-workflow | 1.1.0 | 2026-03-06 | 2026-04-06 | Active |
 | cambium-railway-ops | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
 | cambium-database-migrations | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
 | cambium-permissions-log | 1.0.0 | 2026-03-05 | 2026-04-05 | Active |
+| feature-millwork-infrastructure | 1.0.0 | 2026-02-14 | 2026-04-14 | Active |
+| pm-folder-standards | 1.0.0 | 2026-02-17 | 2026-04-17 | Active |
+| awmac-naaws | 1.0.0 | — | — | Active (Claude.ai only) |
+| badge-reflex-system | 1.0.0 | — | — | Active (Claude.ai only) |
+| context-engineering | 1.0.0 | — | — | Active (Claude.ai only) |
+| mcp-server-development | 1.0.0 | — | — | Active (Claude.ai only) |
+| millwork-shop-drawings | 1.0.0 | — | — | Active (Claude.ai only) |
+| quickbooks-contractor-invoicing | 1.0.0 | — | — | Active (Claude.ai only) |
 | cambium-hosting | - | - | - | Planned |
 
 ## Revision Schedule
@@ -41,6 +49,17 @@ When reviewing a skill:
 5. Update version number and dates
 
 ## Changelog
+
+### 2026-03-06 (skills audit + consolidation)
+- `cambium-platform` v1.1.0: verified counts (20 modules, 8 clients, 117 migrations, 0 warnings)
+- `aspnet-api-development` v1.1.0: removed Rami terminology, added dual auth + column-drift pattern
+- `agentic-coding-workflow` v1.1.0: added AUDIT.log protocol, pre-railway-push gate, fixed warning count
+- `autocad-plugin-development` v1.0.1: updated AutoCAD version range to 2022-2026
+- `millwork-file-management`: flagged PENDING UPDATE (V7.1.1 gap — 10+ structural changes including folder naming, view numbers, system folders, fabrication suffix)
+- Registered `feature-millwork-infrastructure` v1.0.0 (existed locally since 2026-02-14)
+- Registered `pm-folder-standards` v1.0.0 (existed locally since 2026-02-17)
+- Added 6 Claude.ai-only skills to registry (no local source): awmac-naaws, badge-reflex-system, context-engineering, mcp-server-development, millwork-shop-drawings, quickbooks-contractor-invoicing
+- Produced 5 updated skill files in `deploy/skills-for-claude-ai/` for Claude.ai upload
 
 ### 2026-03-05 (skills update session)
 - Updated `cambium-platform` to v1.1.0

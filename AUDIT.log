@@ -10,3 +10,22 @@
 [2026-03-05T23:45:09Z] YOLO          | CREATED: deploy/skills/cambium-database-migrations/SKILL.md — EF Core migration management
 [2026-03-05T23:45:10Z] YOLO          | CREATED: deploy/skills/cambium-permissions-log/SKILL.md — AUDIT.log protocol
 [2026-03-05T23:45:11Z] YOLO          | MODIFIED: deploy/skills/SKILLS-REGISTRY.md — 5 new Active, 1 Superseded, 1 updated
+[2026-03-05T23:50:00Z] SESSION_END   | 12 files changed (10 created, 2 modified), 1 skill updated, 5 skills created, pushed to origin/main
+[2026-03-06T00:15:00Z] SESSION_START | Claude.ai skill sync — packaging 5 skills for manual upload (output-only, no code changes)
+[2026-03-06T00:15:01Z] YOLO          | CREATED: outputs/skills-for-claude-ai/cambium-platform.md — standalone (549 lines source)
+[2026-03-06T00:15:02Z] YOLO          | CREATED: outputs/skills-for-claude-ai/cambium-auth-credentials.md — consolidated SKILL.md + 5 reference files
+[2026-03-06T00:15:03Z] YOLO          | CREATED: outputs/skills-for-claude-ai/cambium-railway-ops.md — consolidated SKILL.md + 4 reference files
+[2026-03-06T00:15:04Z] YOLO          | CREATED: outputs/skills-for-claude-ai/cambium-database-migrations.md — standalone
+[2026-03-06T00:15:05Z] YOLO          | CREATED: outputs/skills-for-claude-ai/cambium-permissions-log.md — standalone
+[2026-03-06T00:15:06Z] SESSION_END   | 5 output files created in outputs/skills-for-claude-ai/, 0 code changes
+[2026-03-06T10:00:00Z] SESSION_START | Skills audit — reviewing 11 Claude.ai skills, updating stale ones
+[2026-03-06T10:01:00Z] YOLO          | CREATED: deploy/skills-for-claude-ai/01-cambium-platform.md — updated to v1.1.0, fixed 22→0 warnings, removed EF Core version conflict section, AutoCAD 2022-2026
+[2026-03-06T10:02:00Z] YOLO          | CREATED: deploy/skills-for-claude-ai/02-aspnet-api-development.md — packaged from deploy/ (dual auth, column-drift, no Rami)
+[2026-03-06T10:03:00Z] YOLO          | CREATED: deploy/skills-for-claude-ai/03-agentic-coding-workflow.md — fixed 22→0 warnings in pre-push gate
+[2026-03-06T10:04:00Z] YOLO          | CREATED: deploy/skills-for-claude-ai/04-autocad-plugin-development.md — AutoCAD 2022-2025→2022-2026 (4 locations), 2025+→2027+
+[2026-03-06T10:05:00Z] YOLO          | CREATED: deploy/skills-for-claude-ai/09-millwork-file-management.md — flagged PENDING UPDATE (v5.7.0, V7.1.1 gaps in HTML comment)
+[2026-03-06T10:06:00Z] YOLO          | CREATED: deploy/skills-for-claude-ai/00-UPLOAD-INSTRUCTIONS.md — upload procedure and status
+[2026-03-06T10:07:00Z] SESSION_END   | 11 skills audited: 4 updated, 1 PENDING, 6 Claude.ai-only (no local source). 7 output files produced, 0 code changes
+[2026-03-06T11:00:00Z] SESSION_START | Skills consolidation — registry update, commit output files
+[2026-03-06T11:01:00Z] YOLO          | MODIFIED: deploy/skills/SKILLS-REGISTRY.md — version bumps (3 skills), PENDING flag (millwork), 8 new entries (2 local + 6 Claude.ai-only), changelog
+[2026-03-06T11:02:00Z] SESSION_END   | 2 commits: output directory + registry update. 25 skills tracked (19 Active, 6 Claude.ai-only, 1 PENDING, 1 Superseded, 1 Planned). Action 2 skipped — /mnt/skills/user/ unavailable
