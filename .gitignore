@@ -12,3 +12,6 @@ deploy/skills.b64
 # MCP plugin artifacts
 .playwright-mcp/
 .test_hash/
+
+# Generated outputs
+outputs/
