@@ -41,11 +41,28 @@ $pDrive = Get-PSDrive -Name P -ErrorAction SilentlyContinue
 if (-not $pDrive) {
     Write-Host "P: drive is NOT mapped. Mapping now..." -ForegroundColor Red
     try {
-        net use P: \\Server\Projects /persistent:yes
-        Write-Host "P: drive mapped successfully." -ForegroundColor Green
+        # Use New-PSDrive which is more reliable than net use for SMB1 shares
+        # Try IP first (more reliable than hostname), fall back to hostname
+        $root = "\\192.168.0.116\Projects"
+        if (-not (Test-Connection -ComputerName "192.168.0.116" -Count 1 -Quiet)) {
+            Write-Host "IP not reachable, trying hostname..." -ForegroundColor Yellow
+            $root = "\\Server\Projects"
+        }
+        New-PSDrive -Name "P" -PSProvider FileSystem -Root $root -Persist -Scope Global -ErrorAction Stop
+        Write-Host "P: drive mapped successfully to $root" -ForegroundColor Green
     } catch {
-        Write-Host "Failed to map P: drive: $_" -ForegroundColor Red
-        exit 1
+        Write-Host "New-PSDrive failed, trying net use as fallback..." -ForegroundColor Yellow
+        try {
+            net use P: $root /persistent:yes 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "P: drive mapped via net use." -ForegroundColor Green
+            } else {
+                throw "net use failed with exit code $LASTEXITCODE"
+            }
+        } catch {
+            Write-Host "Failed to map P: drive: $_" -ForegroundColor Red
+            exit 1
+        }
     }
 } else {
     Write-Host "P: drive is mapped." -ForegroundColor Green
