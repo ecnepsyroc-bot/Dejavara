@@ -11,7 +11,6 @@ Master orchestration platform with domains for work and home.
 | OpenClaw | Central AI controller | Gateway on Pi, node on laptop. See `OpenClaw/CLAUDE.md` |
 | Cambium | Work domain | See `Cambium/CLAUDE.md` |
 | Phteah-pi | Home domain | See `Phteah-pi/CLAUDE.md` |
-| FileOrganizer | Shared utility | File organization across domains |
 | AutoCAD-AHK | Shared utility | AutoHotkey scripts for AutoCAD |
 
 ## Architecture
@@ -22,11 +21,9 @@ C:\Dev\
 │   ├── OpenClaw/       ← AI brain (SUBMODULE)
 │   ├── Cambium/        ← Work: millwork factory (SUBMODULE)
 │   ├── Phteah-pi/      ← Home: Pi server (SUBMODULE)
-│   ├── FileOrganizer/  ← File organization (SUBMODULE)
 │   ├── AutoCAD-AHK/    ← AutoCAD scripts (SUBMODULE)
 │   ├── deploy/         ← Skills, identity → syncs to Pi
 │   └── scripts/        ← Workstation ops scripts
-├── AutoCAD-tools/      # Standalone (not submodule)
 └── llm-council/        # Standalone (not submodule)
 ```
 
