@@ -12,6 +12,7 @@ $TunnelConfig = "C:\Users\cory\phteah-pi.conf"
 $PiGateway = "192.168.1.76"
 $PiPort = 18789
 $RefreshInterval = 10000  # 10 seconds
+$script:notifiedState = $null  # Tracks last notified state to prevent spam
 
 # Create icons (colored circles)
 function New-StatusIcon {
@@ -23,6 +24,15 @@ function New-StatusIcon {
     $g.FillEllipse($brush, 1, 1, 14, 14)
     $g.Dispose()
     return [System.Drawing.Icon]::FromHandle($bmp.GetHicon())
+}
+
+# Notification helper for WireGuard reminders
+function Show-WireGuardReminder {
+    param($Title, $Message, $IconType)
+    $script:notifyIcon.BalloonTipTitle = $Title
+    $script:notifyIcon.BalloonTipText = $Message
+    $script:notifyIcon.BalloonTipIcon = $IconType
+    $script:notifyIcon.ShowBalloonTip(5000)
 }
 
 $IconGreen = New-StatusIcon ([System.Drawing.Color]::LimeGreen)   # Home - direct
@@ -154,6 +164,20 @@ function Update-Status {
     $piStatus = if ($piReachable) { "Pi: OK" } else { "Pi: Unreachable" }
     $script:notifyIcon.Text = "OpenClaw`n$status`n$piStatus"
     $menuStatus.Text = "$status | $piStatus"
+
+    # WireGuard state reminders (fire once per state change)
+    $stateKey = "$onHomeNetwork|$onShopNetwork|$wgConnected"
+    if ($stateKey -ne $script:notifiedState) {
+        if ($onHomeNetwork -and $wgConnected) {
+            # At home with WireGuard on - causes local routing issues
+            Show-WireGuardReminder "Home Network" "WireGuard not needed — local devices may be unreachable" "Warning"
+        }
+        elseif ($onShopNetwork -and -not $wgConnected) {
+            # At shop without WireGuard - no Pi access
+            Show-WireGuardReminder "Shop Network" "Connect WireGuard for Pi access" "Info"
+        }
+        $script:notifiedState = $stateKey
+    }
 }
 
 # Timer for periodic updates

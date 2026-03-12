@@ -1,6 +1,10 @@
 # Ensure P: Drive Connection and SMB1 Protocol
 # Run this on startup or when P: drive is not accessible
 # Purpose: Prevent Windows Updates from breaking shop file server access
+#
+# NOTE: This script handles SMB1 enablement (requires admin).
+# Drive mapping is handled by map-p-drive.cmd in user startup folder
+# because admin-context drive mappings don't appear in user Explorer.
 
 $ErrorActionPreference = "Stop"
 
@@ -9,7 +13,7 @@ $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 
 Write-Host "=== P: Drive Connection Check ===" -ForegroundColor Cyan
 
-# 1. Check SMB1 Protocol Status
+# 1. Check SMB1 Protocol Status (requires admin to fix)
 Write-Host "`nChecking SMB1 Protocol..." -ForegroundColor Yellow
 $smb1Client = Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Client -ErrorAction SilentlyContinue
 

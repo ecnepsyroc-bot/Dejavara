@@ -5,7 +5,8 @@
       "Bash(git rm:*)",
       "Bash(for adapter in Cambium.Adapter.*/)",
       "Bash(done)",
-      "Bash(dotnet sln add:*)"
+      "Bash(dotnet sln add:*)",
+      "Bash(dotnet clean:*)"
     ]
   }
 }
