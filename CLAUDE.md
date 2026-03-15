@@ -27,52 +27,31 @@ C:\Dev\
 └── llm-council/        # Standalone (not submodule)
 ```
 
-## CRITICAL: Prevent Dev Environment Divergence
+## Dev Environment Layout (updated 2026-03-15)
 
-### ABSOLUTE RULE: No Standalone Clones
+### One Canonical Repo Per Machine
 
-**Submodules exist ONLY inside `C:\Dev\Dejavara\`.** There is no other option.
+| Machine | Cambium Repo | Role |
+|---------|-------------|------|
+| **DEJAVARA** | `C:\Users\cory\repos\Cambium` | Canonical dev repo |
+| **Cambium-Server** | `C:\Cambium` | Production SSOT |
+
+**Cambium has its own standalone clone** — it outgrew the submodule pattern.
+The Dejavara submodule copy (`C:\Dev\Dejavara\Cambium`) is **stale** — do not edit.
+
+Other submodules (OpenClaw, Phteah-pi, AutoCAD-AHK) still live inside Dejavara.
+
+### Prevent Duplicate Repos
+
+Do NOT create additional clones. One repo per machine, per project.
 
 ```
-VALID:   C:\Dev\Dejavara\Cambium\
-INVALID: C:\Users\cory\repos\Cambium\      ← NEVER
-INVALID: C:\Users\cory\Dev\Dejavara\       ← NEVER
-INVALID: C:\Cambium\                        ← NEVER
-INVALID: Anywhere else                      ← NEVER
+VALID:   C:\Users\cory\repos\Cambium\       ← DEJAVARA canonical
+VALID:   C:\Cambium\                          ← Cambium-Server canonical
+VALID:   C:\Dev\Dejavara\OpenClaw\           ← Submodule (active)
+INVALID: C:\Dev\Dejavara\Cambium\            ← STALE submodule, don't edit
+INVALID: Any other Cambium clone             ← NEVER
 ```
-
-**If a submodule breaks, FIX IT. Do not clone fresh somewhere else.**
-
-```bash
-# Submodule broken? Run this:
-cd C:\Dev\Dejavara
-git submodule update --init --remote Cambium
-cd Cambium
-git checkout main
-git pull
-```
-
-That's the fix. Not `git clone`. Never `git clone` for submodules.
-
-### Why This Rule Exists
-
-On 2026-02-14, we cleaned up 25+ GB of duplicate repos that had drifted apart.
-On 2026-03-11, we cleaned up AGAIN because a standalone clone appeared at `C:\Users\cory\repos\Cambium`.
-
-The pattern: submodule breaks → someone clones fresh as "workaround" → work accumulates there → drift → cleanup. This cycle ends now.
-
-### Blocked Actions
-
-- Clone Cambium, OpenClaw, Phteah-pi, or AutoCAD-Tools outside Dejavara
-- Create alternate dev roots (`C:\Users\cory\Dev\`, `C:\Users\cory\repos\`, etc.)
-- Add circular submodule references
-- Scatter scripts outside `C:\Dev\Dejavara\scripts\`
-
-### Required Actions
-
-- Work within `C:\Dev\Dejavara\{submodule}` for ALL submodule work
-- Push from within submodules, then update Dejavara's ref
-- If submodule breaks, fix it in place — see commands above
 
 ## Domain Boundaries
 
@@ -176,11 +155,15 @@ When making changes to deployed infrastructure (Phteah-Pi, Cambium server, etc.)
 
 If you add a container, change a port, modify storage, or alter network config — update all affected docs in the same session. Docs that drift from reality are worse than no docs.
 
-### Cambium Shop Server (cambium-server) — DEPRECATED
-- Windows 10 at 192.168.0.108, accessible via Chrome Remote Desktop
-- CambiumApi on DEJAVARA serves the shop floor (localhost:5001 → Cloudflare tunnel). cambium-server is not needed as an API host.
-- Has stale CambiumApi service (disabled, DI bug). Treat as dead unless explicitly revived.
-- If repurposed in future, needs full rebuild from Dejavara monorepo — current directory layout is diverged.
+### Cambium Shop Server (cambium-server) — PRODUCTION SSOT
+- Windows 10 at 192.168.0.108, hostname cambium-server
+- **This is where the shop accesses Cambium** at `http://192.168.0.108:5001`
+- CambiumApi runs as Windows service on port 5001
+- **Code repo:** `C:\Cambium\` (consolidated 2026-03-15)
+- **Service binary:** `C:\Services\Cambium\Cambium.Api.exe`
+- **Deploy:** git pull → `dotnet publish src/Cambium.Api -c Release -o C:\Services\Cambium` → `Restart-Service CambiumApi`
+- **SSH:** Tunnel only from DEJAVARA (`ssh cambium-server-tunnel`). Lands in CMD — use Git Bash explicitly.
+- **PostgreSQL:** PG 16 on port 5432
 
 ## Debugging Approach
 

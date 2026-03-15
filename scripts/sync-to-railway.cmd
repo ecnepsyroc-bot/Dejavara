@@ -7,7 +7,13 @@ set RAILWAY_HOST=trolley.proxy.rlwy.net
 set RAILWAY_PORT=44567
 set RAILWAY_USER=cambium_sync
 set RAILWAY_DB=railway
-set RAILWAY_PASS=WugWOsTpdDzUuS6Y4KuGCWTLFUuggOZH
+REM Railway password — set via environment variable or .env file
+REM Check Railway dashboard if password has rotated: https://railway.app
+if not defined RAILWAY_PASS (
+    echo ERROR: RAILWAY_PASS environment variable not set. >> %LOG%
+    echo Set it with: set RAILWAY_PASS=your_password_from_railway_dashboard
+    exit /b 1
+)
 set PG_BIN=C:\Program Files\PostgreSQL\18\bin
 
 echo ============================================== >> %LOG%
