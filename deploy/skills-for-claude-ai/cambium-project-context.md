@@ -1,9 +1,9 @@
 # Cambium — Project Context
 
 > Feature Millwork's Unified Automation Platform
-> For use in Claude AI Projects — sourced 2026-03-15
+> For use in Claude AI Projects — verified 2026-03-15
 >
-> **Verification basis:** Code-level audits (2026-02-22 philosophy audit verified via Glob/Grep/Read against actual `.cs` files; 2026-03-11 build + structure audit), platform skill files (2026-03-05), git history. Submodule source was not directly accessible in this session; all claims traced to their source and confidence level.
+> **Verification basis:** Code-level recount against live source tree (2026-03-15), corroborated by audits (2026-02-22, 2026-03-11) and platform skill files (2026-03-05).
 
 ## 1. What Cambium Is
 
@@ -21,7 +21,7 @@ Cambium is a C# platform that automates shop floor communication, drawing produc
 
 Cambium follows hexagonal architecture with two coexisting generations of code — understanding this split is essential.
 
-**Gen 2 (target architecture):** 12 self-contained modules in `modules/`, communicating only through adapters. No module imports from another module. Only 3 modules (Jobs, Badges, Inventory) are fully hexagonally compliant with proper Domain/Ports/Adapters structure. 11 of 12 have MODULE.md files.
+**Gen 2 (target architecture):** 21 `Cambium.Module.*` modules in `modules/` (25 total including non-module projects), communicating only through adapters. No module imports from another module. Only 2 modules (Jobs, Inventory) are fully hexagonally compliant with proper Domain/Ports/Adapters structure and use-case wiring. Badges has the folder structure but routes through Gen 1 managers. 20 of 21 `Cambium.Module.*` dirs have MODULE.md files (missing: SiteView).
 
 **Gen 1 (legacy, dominant):** 44 concrete manager classes in `src/Cambium.Core/Managers/` that inject `CambiumDbContext` directly. ~55 controllers, most calling managers without an intermediate use-case layer. This is the code path that handles most requests today.
 
@@ -62,7 +62,7 @@ var job = await jobToChatAdapter.GetJobAsync(jobId);
 
 ## 5. Modules by Status
 
-Two directory scopes: 12 `Cambium.Module.*` modules in `modules/` (verified Feb 22 audit), plus 8 additional project directories (`Cambium.Courier`, `Cambium.PdfLibrary`, `Cambium.Sheets`, `Cambium.Workflow`, etc.) counted as 20 total in the Mar 5 skill file.
+25 directories under `modules/`: 21 are `Cambium.Module.*`, 4 are standalone projects (`Cambium.Courier`, `Cambium.PdfLibrary`, `Cambium.Sheets`, `Cambium.Workflow`). 20 of 21 `Cambium.Module.*` dirs have MODULE.md; the 4 standalone projects do not. `Cambium.Module.SiteView` is the only `Cambium.Module.*` missing MODULE.md.
 
 ### Production
 
@@ -70,7 +70,7 @@ Two directory scopes: 12 `Cambium.Module.*` modules in `modules/` (verified Feb 
 |--------|---------------|-----------|
 | Cambium.Module.Inventory | Laminate inventory tracking | Verified — React client in production, daily transactions |
 | Cambium.Module.Chat | Real-time messaging (Botta e Risposta) | Verified — SignalR hub, ChatRepository, daily use |
-| Cambium.Module.Badges | Badge management, spec tracking | Verified — BadgesController with 5+ injected services, Luxify integration |
+| Cambium.Module.Badges | Badge management, spec tracking | Verified — but STRUCTURAL ONLY hex compliance (has Domain/Ports/Adapters folders; BadgeService injects CambiumDbContext directly, uses IBadgesManager Gen 1 pattern) |
 | Cambium.Module.Staging | Pre-production staging | Verified — StagingHub, StagingController |
 | Cambium.Module.Production | Production workflows | Skill-sourced — listed Active in all audits |
 
@@ -88,7 +88,7 @@ Two directory scopes: 12 `Cambium.Module.*` modules in `modules/` (verified Feb 
 
 ### Skeleton / In Progress
 
-Cambium.Module.Bom, Cambium.Module.Courier, Cambium.Module.Directory, Cambium.Module.Locations, Cambium.Module.Workflow, Cambium.PdfLibrary, Cambium.Sheets, Cambium.Workflow (stub).
+Cambium.Module.Bom, Cambium.Module.Courier, Cambium.Module.Directory, Cambium.Module.DocumentIngestion, Cambium.Module.FileSync, Cambium.Module.LocalPathMapping, Cambium.Module.Locations, Cambium.Module.R2Storage, Cambium.Module.SiteView (no MODULE.md), Cambium.Module.Workflow, Cambium.PdfLibrary, Cambium.Sheets, Cambium.Workflow (stub).
 
 ## 6. Clients by Status
 
@@ -133,7 +133,7 @@ MasterToSheet, SheetToPdf — implement or remove.
 |-----------|---------|--------|
 | .NET SDK | 8.0 / 10.0 (Courier) | Skill files + build confirmation |
 | ASP.NET Core | 8.0 | REST API + SignalR |
-| Entity Framework Core | 8.0 (8.0.11 pinned, 8.0.24 resolved) | 22 MSB3277 warnings from conflict |
+| Entity Framework Core | 8.0 | Build passes; 0 MSB3277 warnings on clean build |
 | PostgreSQL | 17 (shop + Pi), 14+ (Railway) | Hosting skill |
 | Npgsql | 9.0.2 | Skill files |
 
@@ -157,14 +157,14 @@ Key ports: 5001 (API), 5432 (PG 17), 5433 (PG 16 legacy, DEJAVARA only), 51820 (
 
 ## 9. Database Summary
 
-- **182 DbSet registrations** (91 unique entity types) in CambiumDbContext — a single massive shared context (per Feb 22 audit: "80+ DbSets"; Mar 5 skill: "182 total")
-- **117 migrations** (2025-12-23 → 2026-03-04)
-- **165 tables** on shop server, **109 on Railway** (55 unshipped = expected)
+- **175 DbSet registrations** mapping to **171 distinct entity types** in CambiumDbContext — a single shared context across all domains
+- **58 migrations** (2025-12-23 → 2026-03-12), including 1 in AutoCAD subfolder. No orphans.
+- **165 tables** on shop server, **109 on Railway** (56 unshipped = expected)
 - **288 DTO classes** in `Cambium.Shared/DTOs/` (Feb 2026 count)
 
 Entity groups: Jobs & FOs, Messaging, Badges & Specs, Millwork Hierarchy, Directory, Operations, Contract Documents, Drawings, Inventory, Courier, Users & Auth.
 
-**Railway schema drift:** 55 EF entities have no Railway tables. Any endpoint querying these returns 500. Pre-push: run `scripts/check-railway-schema.sql`.
+**Railway schema drift:** 56 tables on shop server have no Railway equivalent. Any endpoint querying these returns 500. Pre-push: run `scripts/check-railway-schema.sql`.
 
 **No MigrateAsync().** Removed after destructive Railway recreation. Self-healing ALTER block in Program.cs:622-674 handles auth-critical columns.
 
@@ -208,20 +208,20 @@ dotnet publish src/Cambium.Api -c Release -o publish/  # manual deploy
 | `CLAUDE-ARCHITECTURE.md` | Hexagonal rules (note: lists only 2 adapters — stale) |
 | `src/Cambium.Api/Program.cs` | Startup (1200+ lines): self-healing 622-674, auth 201-214, admin seed 1192-1211 |
 | `src/Cambium.Api/Controllers/AuthController.cs` | Login 40-190, JWT 1226-1256 |
-| `src/Cambium.Data/DbContext/CambiumDbContext.cs` | 182 DbSets |
+| `src/Cambium.Data/DbContext/CambiumDbContext.cs` | 175 DbSets (171 distinct types) |
 | `modules/Cambium.Module.Inventory/Domain/Entities/Laminate.cs` | Best DDD example: factory methods, value objects |
 | `scripts/check-railway-schema.sql` | Pre-push Railway validation |
 
 ## 15. Known Debt
 
-- **Gen 1 dominates Gen 2.** 44 managers in Core vs. 3 fully compliant modules. The migration is real but early.
+- **Gen 1 dominates Gen 2.** 44 managers in Core vs. 2 fully compliant modules (Jobs, Inventory). Badges has hex folder structure but wires through Gen 1 managers with direct DbContext injection.
 - **Only 4 domain events wired.** 9 event contracts defined, 5 are contracts-only.
-- **Monolithic CambiumDbContext** with 80-182 DbSets. Module boundaries not enforced at data layer.
-- **22 MSB3277 warnings** from EF Core version conflict (8.0.11 vs 8.0.24 across 5 projects).
+- **Monolithic CambiumDbContext** with 175 DbSets (171 distinct types). Module boundaries not enforced at data layer.
 - **Dependency violations:** Core→Data, Core→Module.Chat, Module.Inventory→Data (compiler-visible).
 - **127+ TODO/FIXME/Deprecated** markers across the codebase (2026-03-11 audit).
-- **55 Railway-missing tables.** New endpoints touching unshipped entities will 500.
+- **56 Railway-missing tables.** New endpoints touching unshipped entities will 500.
 - **CLAUDE-ARCHITECTURE.md is stale** — lists only 2 adapters (there are 8).
 - **DrawingCheckout** has EF `[Table]`/`[Column]` annotations on domain entities (violates hex rules).
 - **`bom-manager`** phantom — referenced in old docs, never existed.
 - **288 DTOs** in Shared — growing; should separate contract interfaces from API DTOs.
+- **Cambium.Module.SiteView** is the only `Cambium.Module.*` dir missing MODULE.md.
