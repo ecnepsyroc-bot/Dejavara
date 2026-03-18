@@ -1,18 +1,29 @@
-# OpenClaw Network Status Tray Icon
-# Shows connection status: Home, Shop, VPN, Disconnected
+# OpenClaw Service Status Tray Icon (v2 — Cloudflare-only)
+# Three independent health checks via Cloudflare tunnels. No VPN, no network detection.
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# Config
-$HomeNetwork = "TELUS7838"
-$ShopSubnet = "192.168.0."
-$TunnelName = "phteah-pi"
-$TunnelConfig = "C:\Users\cory\phteah-pi.conf"
-$PiGateway = "192.168.1.76"
-$PiPort = 18789
-$RefreshInterval = 10000  # 10 seconds
-$script:notifiedState = $null  # Tracks last notified state to prevent spam
+# Health check URLs (all through Cloudflare)
+$PiHealthUrl = "https://cambium-home.luxifysystems.com/health"
+$ServerHealthUrl = "https://api.luxifyspecgen.com/api/version"
+$RailwayHealthUrl = "https://cambium-production.up.railway.app/api/version"
+
+# Cloudflare Service Token (bypasses Access login for Pi and Server)
+$CfTokenId = "54b4dda94cf3350d082fbf2859464d3f.access"
+$CfTokenSecret = "0ced21fcd5dd650005b041cda37259969c58cd0466d168fa7c935bc2e269fc73"
+$CfHeaders = @{
+    "CF-Access-Client-Id"     = $CfTokenId
+    "CF-Access-Client-Secret" = $CfTokenSecret
+}
+
+# Timing
+$HealthCheckInterval = 30000  # 30 seconds for all checks
+
+# State
+$script:piOk = $null
+$script:serverOk = $null
+$script:railwayOk = $null
 
 # Create icons (colored circles)
 function New-StatusIcon {
@@ -26,19 +37,9 @@ function New-StatusIcon {
     return [System.Drawing.Icon]::FromHandle($bmp.GetHicon())
 }
 
-# Notification helper for WireGuard reminders
-function Show-WireGuardReminder {
-    param($Title, $Message, $IconType)
-    $script:notifyIcon.BalloonTipTitle = $Title
-    $script:notifyIcon.BalloonTipText = $Message
-    $script:notifyIcon.BalloonTipIcon = $IconType
-    $script:notifyIcon.ShowBalloonTip(5000)
-}
-
-$IconGreen = New-StatusIcon ([System.Drawing.Color]::LimeGreen)   # Home - direct
-$IconBlue = New-StatusIcon ([System.Drawing.Color]::DodgerBlue)   # VPN connected
-$IconOrange = New-StatusIcon ([System.Drawing.Color]::Orange)     # Shop no VPN
-$IconRed = New-StatusIcon ([System.Drawing.Color]::Red)           # Disconnected
+$IconGreen  = New-StatusIcon ([System.Drawing.Color]::LimeGreen)
+$IconYellow = New-StatusIcon ([System.Drawing.Color]::Gold)
+$IconRed    = New-StatusIcon ([System.Drawing.Color]::Red)
 
 # Create notify icon
 $script:notifyIcon = New-Object System.Windows.Forms.NotifyIcon
@@ -51,26 +52,6 @@ $menuStatus = New-Object System.Windows.Forms.ToolStripMenuItem
 $menuStatus.Text = "Checking..."
 $menuStatus.Enabled = $false
 $contextMenu.Items.Add($menuStatus) | Out-Null
-
-$contextMenu.Items.Add((New-Object System.Windows.Forms.ToolStripSeparator)) | Out-Null
-
-$menuConnect = New-Object System.Windows.Forms.ToolStripMenuItem
-$menuConnect.Text = "Connect VPN"
-$menuConnect.Add_Click({
-    & "C:\Program Files\WireGuard\wireguard.exe" /installtunnelservice $TunnelConfig 2>&1 | Out-Null
-    Start-Sleep -Seconds 2
-    Update-Status
-})
-$contextMenu.Items.Add($menuConnect) | Out-Null
-
-$menuDisconnect = New-Object System.Windows.Forms.ToolStripMenuItem
-$menuDisconnect.Text = "Disconnect VPN"
-$menuDisconnect.Add_Click({
-    & "C:\Program Files\WireGuard\wireguard.exe" /uninstalltunnelservice $TunnelName 2>&1 | Out-Null
-    Start-Sleep -Seconds 2
-    Update-Status
-})
-$contextMenu.Items.Add($menuDisconnect) | Out-Null
 
 $contextMenu.Items.Add((New-Object System.Windows.Forms.ToolStripSeparator)) | Out-Null
 
@@ -106,83 +87,60 @@ $notifyIcon.Add_DoubleClick({
     Start-Process "http://localhost:18789"
 })
 
+# Health check helper
+function Test-Endpoint {
+    param($Url, $Headers)
+    try {
+        $params = @{
+            Uri             = $Url
+            UseBasicParsing = $true
+            TimeoutSec      = 5
+            ErrorAction     = 'Stop'
+        }
+        if ($Headers) { $params.Headers = $Headers }
+        $response = Invoke-WebRequest @params
+        return ($response.StatusCode -eq 200)
+    }
+    catch {
+        return $false
+    }
+}
+
 # Status update function
 function Update-Status {
-    # Get network info
-    $adapters = Get-NetAdapter | Where-Object { $_.Status -eq "Up" -and $_.Name -notlike "*WireGuard*" -and $_.Name -ne $TunnelName }
-    $networks = Get-NetConnectionProfile | Where-Object { $_.InterfaceAlias -notlike "*WireGuard*" -and $_.InterfaceAlias -ne $TunnelName }
+    # Three independent health checks
+    $script:piOk      = Test-Endpoint -Url $PiHealthUrl -Headers $CfHeaders
+    $script:serverOk   = Test-Endpoint -Url $ServerHealthUrl -Headers $CfHeaders
+    $script:railwayOk  = Test-Endpoint -Url $RailwayHealthUrl
 
-    $onHomeNetwork = $networks | Where-Object { $_.Name -eq $HomeNetwork }
+    # Count
+    $up = 0
+    if ($script:piOk) { $up++ }
+    if ($script:serverOk) { $up++ }
+    if ($script:railwayOk) { $up++ }
 
-    $onShopNetwork = $false
-    foreach ($adapter in $adapters) {
-        $ip = Get-NetIPAddress -InterfaceIndex $adapter.ifIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue
-        if ($ip -and $ip.IPAddress.StartsWith($ShopSubnet)) {
-            $onShopNetwork = $true
-            break
-        }
-    }
-
-    $wgAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*WireGuard*" -or $_.Name -eq $TunnelName } -ErrorAction SilentlyContinue
-    $wgConnected = $wgAdapter -and $wgAdapter.Status -eq "Up"
-
-    # Test Pi connectivity
-    $piReachable = Test-Connection -ComputerName $PiGateway -Count 1 -Quiet -ErrorAction SilentlyContinue
-
-    # Determine status
-    if ($onHomeNetwork) {
+    # Icon: green (3/3), yellow (1-2/3), red (0/3)
+    if ($up -eq 3) {
         $script:notifyIcon.Icon = $IconGreen
-        $status = "HOME - Direct to Pi"
-        $menuConnect.Enabled = $true
-        $menuDisconnect.Enabled = $wgConnected
-    }
-    elseif ($onShopNetwork -and $wgConnected) {
-        $script:notifyIcon.Icon = $IconBlue
-        $status = "SHOP + VPN - Pi via tunnel"
-        $menuConnect.Enabled = $false
-        $menuDisconnect.Enabled = $true
-    }
-    elseif ($onShopNetwork -and -not $wgConnected) {
-        $script:notifyIcon.Icon = $IconOrange
-        $status = "SHOP - Need VPN for Pi!"
-        $menuConnect.Enabled = $true
-        $menuDisconnect.Enabled = $false
-    }
-    elseif ($wgConnected) {
-        $script:notifyIcon.Icon = $IconBlue
-        $status = "REMOTE + VPN - Pi via tunnel"
-        $menuConnect.Enabled = $false
-        $menuDisconnect.Enabled = $true
-    }
-    else {
+    } elseif ($up -gt 0) {
+        $script:notifyIcon.Icon = $IconYellow
+    } else {
         $script:notifyIcon.Icon = $IconRed
-        $status = "DISCONNECTED - No Pi access"
-        $menuConnect.Enabled = $true
-        $menuDisconnect.Enabled = $false
     }
 
-    $piStatus = if ($piReachable) { "Pi: OK" } else { "Pi: Unreachable" }
-    $script:notifyIcon.Text = "OpenClaw`n$status`n$piStatus"
-    $menuStatus.Text = "$status | $piStatus"
+    # Per-service status
+    $piLabel      = if ($script:piOk) { "OK" } else { "DOWN" }
+    $serverLabel  = if ($script:serverOk) { "OK" } else { "DOWN" }
+    $railwayLabel = if ($script:railwayOk) { "OK" } else { "DOWN" }
 
-    # WireGuard state reminders (fire once per state change)
-    $stateKey = "$onHomeNetwork|$onShopNetwork|$wgConnected"
-    if ($stateKey -ne $script:notifiedState) {
-        if ($onHomeNetwork -and $wgConnected) {
-            # At home with WireGuard on - causes local routing issues
-            Show-WireGuardReminder "Home Network" "WireGuard not needed — local devices may be unreachable" "Warning"
-        }
-        elseif ($onShopNetwork -and -not $wgConnected) {
-            # At shop without WireGuard - no Pi access
-            Show-WireGuardReminder "Shop Network" "Connect WireGuard for Pi access" "Info"
-        }
-        $script:notifiedState = $stateKey
-    }
+    # Tooltip (63 char limit for NotifyIcon.Text)
+    $script:notifyIcon.Text = "Pi: $piLabel | Server: $serverLabel | Railway: $railwayLabel"
+    $menuStatus.Text = "Pi: $piLabel | Server: $serverLabel | Railway: $railwayLabel"
 }
 
 # Timer for periodic updates
 $script:timer = New-Object System.Windows.Forms.Timer
-$timer.Interval = $RefreshInterval
+$timer.Interval = $HealthCheckInterval
 $timer.Add_Tick({ Update-Status })
 $timer.Start()
 
