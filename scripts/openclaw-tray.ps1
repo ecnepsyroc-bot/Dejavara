@@ -128,14 +128,26 @@ function Update-Status {
         $script:notifyIcon.Icon = $IconRed
     }
 
+    # Budget query (local tunnel, no auth needed)
+    $budgetText = "Budget: ?"
+    try {
+        $b = Invoke-WebRequest -Uri "http://localhost:18789/api/budget" -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop
+        $bd = $b.Content | ConvertFrom-Json
+        if ($bd.ok -and $bd.limit -gt 0) {
+            $budgetText = "Budget: $($bd.used)/$($bd.limit)"
+        }
+    } catch {}
+
     # Per-service status
     $piLabel      = if ($script:piOk) { "OK" } else { "DOWN" }
     $serverLabel  = if ($script:serverOk) { "OK" } else { "DOWN" }
     $railwayLabel = if ($script:railwayOk) { "OK" } else { "DOWN" }
 
     # Tooltip (63 char limit for NotifyIcon.Text)
-    $script:notifyIcon.Text = "Pi: $piLabel | Server: $serverLabel | Railway: $railwayLabel"
-    $menuStatus.Text = "Pi: $piLabel | Server: $serverLabel | Railway: $railwayLabel"
+    $tooltip = "Pi:$piLabel Srv:$serverLabel Rwy:$railwayLabel | $budgetText"
+    if ($tooltip.Length -gt 63) { $tooltip = $tooltip.Substring(0, 63) }
+    $script:notifyIcon.Text = $tooltip
+    $menuStatus.Text = "Pi: $piLabel | Server: $serverLabel | Railway: $railwayLabel | $budgetText"
 }
 
 # Timer for periodic updates
