@@ -9,7 +9,7 @@ Master orchestration platform with domains for work and home.
 | Component | Purpose | Details |
 |-----------|---------|---------|
 | OpenClaw | Central AI controller | Gateway on Pi, node on laptop. See `OpenClaw/CLAUDE.md` |
-| Cambium | Work domain | See `Cambium/CLAUDE.md` |
+| Cambium | Work domain | Standalone at `C:\Dev\Cambium` (removed from monorepo) |
 | Phteah-pi | Home domain | See `Phteah-pi/CLAUDE.md` |
 | AutoCAD-AHK | Shared utility | AutoHotkey scripts for AutoCAD |
 
@@ -19,11 +19,11 @@ Master orchestration platform with domains for work and home.
 C:\Dev\
 ├── Dejavara/           # THIS REPO - master monorepo
 │   ├── OpenClaw/       ← AI brain (SUBMODULE)
-│   ├── Cambium/        ← Work: millwork factory (SUBMODULE)
 │   ├── Phteah-pi/      ← Home: Pi server (SUBMODULE)
 │   ├── AutoCAD-AHK/    ← AutoCAD scripts (SUBMODULE)
 │   ├── deploy/         ← Skills, identity → syncs to Pi
 │   └── scripts/        ← Workstation ops scripts
+├── Cambium/            # Standalone clone (removed from monorepo 2026-03-18)
 └── llm-council/        # Standalone (not submodule)
 ```
 
@@ -33,11 +33,10 @@ C:\Dev\
 
 | Machine | Cambium Repo | Role |
 |---------|-------------|------|
-| **DEJAVARA** | `C:\Users\cory\repos\Cambium` | Canonical dev repo |
+| **DEJAVARA** | `C:\Dev\Cambium` | Canonical dev repo |
 | **Cambium-Server** | `C:\Cambium` | Production SSOT |
 
-**Cambium has its own standalone clone** — it outgrew the submodule pattern.
-The Dejavara submodule copy (`C:\Dev\Dejavara\Cambium`) is **stale** — do not edit.
+**Cambium has its own standalone clone** at `C:\Dev\Cambium` — submodule removed from Dejavara 2026-03-18.
 
 Other submodules (OpenClaw, Phteah-pi, AutoCAD-AHK) still live inside Dejavara.
 
@@ -46,10 +45,9 @@ Other submodules (OpenClaw, Phteah-pi, AutoCAD-AHK) still live inside Dejavara.
 Do NOT create additional clones. One repo per machine, per project.
 
 ```
-VALID:   C:\Users\cory\repos\Cambium\       ← DEJAVARA canonical
+VALID:   C:\Dev\Cambium\                     ← DEJAVARA canonical (standalone)
 VALID:   C:\Cambium\                          ← Cambium-Server canonical
 VALID:   C:\Dev\Dejavara\OpenClaw\           ← Submodule (active)
-INVALID: C:\Dev\Dejavara\Cambium\            ← STALE submodule, don't edit
 INVALID: Any other Cambium clone             ← NEVER
 ```
 
