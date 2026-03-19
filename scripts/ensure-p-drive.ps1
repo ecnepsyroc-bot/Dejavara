@@ -1,3 +1,11 @@
+# DEPRECATED — Use the new P: drive monitoring system instead
+# Replacement: scripts/p-drive/p-drive-admin-fix.ps1 (scheduled task, auto-healing)
+#              scripts/p-drive/p-drive-connect.ps1 (user reconnection)
+#              openclaw-tray.ps1 (monitoring with toast notifications)
+# Setup: Run scripts/p-drive/setup-p-drive-v2.ps1 as admin
+# This file kept for manual troubleshooting only.
+# ============================================================================
+#
 # Ensure P: Drive Connection and SMB1 Protocol
 # Run this on startup or when P: drive is not accessible
 # Purpose: Prevent Windows Updates from breaking shop file server access

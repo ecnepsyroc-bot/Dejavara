@@ -1,4 +1,10 @@
 @echo off
+:: DEPRECATED - Use the new P: drive monitoring system instead
+:: Replacement: openclaw-tray.ps1 now monitors and auto-reconnects P: drive
+:: Setup: Run scripts/p-drive/setup-p-drive-v2.ps1 as admin
+:: This file kept for manual use or as fallback startup shortcut.
+:: ============================================================================
+::
 :: Map P: drive to shop file server (\\Server\Projects)
 :: This runs at user logon to ensure P: appears in Explorer
 :: SMB1 protocol is managed separately by ensure-p-drive.ps1 (admin task)

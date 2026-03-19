@@ -203,17 +203,20 @@ sc query CambiumApi
 
 | Script | Purpose | Used By | Status |
 |--------|---------|---------|--------|
-| `openclaw-tray.ps1` | Network status tray icon | User startup | ✅ Active |
+| `openclaw-tray.ps1` | Network status tray icon + P: drive monitor | User startup | ✅ Active |
 | `sync-openclaw-oauth.ps1` | OAuth token sync | Scheduled task | ✅ Active |
 | `sync-from-cambium.ps1` | Cambium data sync | Scheduled task | ✅ Active |
 | `sync-server-projects.ps1` | P: drive sync | Scheduled task | ⚠️ Multiple instances |
-| `ensure-p-drive.ps1` | Auto-fix P: drive disconnects | `setup-p-drive-monitor.ps1` | ℹ️ Setup script exists, monitor task not found |
+| `p-drive/p-drive-admin-fix.ps1` | SMB1/network profile auto-fix (SYSTEM) | "P-Drive Admin Fix" task | ✅ Runs every 1 min |
+| `p-drive/p-drive-connect.ps1` | User reconnection with retry/backoff | Called by tray icon | ✅ Active |
+| `ensure-p-drive.ps1` | DEPRECATED - manual P: drive fix | - | Replaced by p-drive/* |
 
 #### Setup Scripts (run once)
 
 | Script | Purpose | Status |
 |--------|---------|--------|
-| `setup-p-drive-monitor.ps1` | Creates "Ensure P-Drive Connection" task | Should be run as admin |
+| `p-drive/setup-p-drive-v2.ps1` | Creates "P-Drive Admin Fix" task (1min interval) | Run as admin |
+| `setup-p-drive-monitor.ps1` | DEPRECATED - old task setup | Replaced by setup-p-drive-v2.ps1 |
 | `setup-oauth-sync-task.ps1` | Creates OAuth sync task | ✅ Already set up |
 | `setup-sync-tasks.ps1` | Creates sync tasks | ✅ Already set up |
 | `setup-connect-server-task.ps1` | Creates server connection task | Unknown if active |
@@ -397,10 +400,16 @@ C:\Dev\Dejavara\scripts\ensure-p-drive.ps1
 **Fix:** Reduced PATH in `node-autostart.cmd` to 259 characters (minimal essential paths only).
 
 ### Issue: P: Drive Disconnects After Windows Updates
-**Status:** ⚠️ **ONGOING** (automated monitoring should prevent)
+**Status:** ✅ **AUTOMATED** (2026-03-19)
 **Cause:** Windows Updates disable SMB1 or reset network profile to Public
-**Mitigation:** Should be automated via "Ensure P-Drive Connection" task (if set up)
-**Manual Fix:** Run `C:\Dev\Dejavara\scripts\ensure-p-drive.ps1`
+**Solution:** New P: drive monitoring system:
+- `openclaw-tray.ps1` monitors P: drive status every 30s, shows in tray icon
+- Auto-reconnects with 5 retries + exponential backoff
+- Toast notifications on disconnect/reconnect
+- `p-drive/p-drive-admin-fix.ps1` runs every 1 minute via scheduled task
+- Re-enables SMB1 and fixes network profile during business hours (Mon-Fri 7am-4pm)
+- Setup: Run `scripts/p-drive/setup-p-drive-v2.ps1` as admin
+**Logs:** `C:\tmp\p-drive\p.log`
 
 ### Issue: Multiple Sync-Server-Projects Instances
 **Status:** ⚠️ **NEEDS INVESTIGATION**
