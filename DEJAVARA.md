@@ -1,18 +1,17 @@
 # Dejavara Platform
 
-> Monorepo for platform-wide tooling. Cambium lives separately.
+> Monorepo for platform-wide tooling. Cambium is a standalone clone at `C:\Dev\Cambium`.
 
 ## Important
 
-**Cambium development happens at `C:\Users\cory\repos\Cambium\` — NOT in this submodule.**
-
-The Cambium submodule here is a secondary reference copy only.
+**Cambium is NOT a submodule.** It was removed from Dejavara on 2026-03-18.
+The canonical dev repo is `C:\Dev\Cambium` (standalone clone).
 
 ## Layout
 
-- `Cambium/` — Submodule reference (secondary — DO NOT develop here)
 - `OpenClaw/` — AI controller (active development here)
 - `Phteah-pi/` — Home server config (active development here)
+- `AutoCAD-AHK/` — AutoCAD panning scripts
 - `deploy/` — Syncthing-managed, syncs to Phteah-Pi
 - `scripts/` — Platform-wide scripts (not Cambium-specific)
 
@@ -27,6 +26,6 @@ The Cambium submodule here is a secondary reference copy only.
 ## For Cambium Work
 
 ```powershell
-cd C:\Users\cory\repos\Cambium
+cd C:\Dev\Cambium
 claude
 ```
